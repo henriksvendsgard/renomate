@@ -79,12 +79,22 @@ function createShoppingStore() {
 
 export const shoppingStore = createShoppingStore();
 
-// Derived store for active (not completed) items
+// Helper function to sort items by creation date (newest first)
+const sortByNewestFirst = (items: ShoppingItem[]) => {
+  return [...items].sort((a, b) => {
+    // If createdAt doesn't exist on either item, use current time for comparison
+    const dateA = a.createdAt ? new Date(a.createdAt).getTime() : Date.now();
+    const dateB = b.createdAt ? new Date(b.createdAt).getTime() : Date.now();
+    return dateB - dateA; // Sort descending (newest first)
+  });
+};
+
+// Derived store for active (not completed) items sorted by newest first
 export const activeItems = derived(shoppingStore, $items => 
-  $items.filter(item => !item.completed)
+  sortByNewestFirst($items.filter(item => !item.completed))
 );
 
-// Derived store for completed items
+// Derived store for completed items sorted by newest first
 export const completedItems = derived(shoppingStore, $items => 
-  $items.filter(item => item.completed)
+  sortByNewestFirst($items.filter(item => item.completed))
 ); 

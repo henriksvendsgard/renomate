@@ -61,7 +61,7 @@
 	}
 </script>
 
-<div class="container mx-auto px-4 py-6">
+<div class="container mx-auto px-4 py-8">
 	<!-- Only show profile content when authenticated -->
 	{#if isAuthenticated}
 		<div class="max-w-lg mx-auto">

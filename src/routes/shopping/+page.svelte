@@ -19,6 +19,31 @@
 	let editQuantity = $state(1);
 	let editComment = $state('');
 
+	// Function to check if an item was added in the last 24 hours
+	function isRecentlyAdded(item: { createdAt?: string }): boolean {
+		if (!item.createdAt) return false;
+
+		const createdTime = new Date(item.createdAt).getTime();
+		const now = Date.now();
+		const oneDayInMs = 24 * 60 * 60 * 1000;
+
+		return now - createdTime < oneDayInMs;
+	}
+
+	// Format relative time (e.g., "Added 3 hours ago")
+	function formatRelativeTime(dateString?: string): string {
+		if (!dateString) return '';
+
+		const created = new Date(dateString).getTime();
+		const now = Date.now();
+		const diffInSeconds = Math.floor((now - created) / 1000);
+
+		if (diffInSeconds < 60) return 'Nettopp lagt til';
+		if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} min siden`;
+		if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} timer siden`;
+		return `${Math.floor(diffInSeconds / 86400)} dager siden`;
+	}
+
 	// Redirect if not authenticated
 	onMount(() => {
 		if (!$authStore.isAuthenticated && !$authStore.loading) {
@@ -146,7 +171,7 @@
 	}
 </script>
 
-<div class="max-w-lg mx-auto p-4 py-6">
+<div class="max-w-lg mx-auto p-4 py-8">
 	<h1 class="text-2xl font-bold text-charcoal mb-4">Handleliste</h1>
 
 	<!-- Add new item form -->
@@ -221,7 +246,10 @@
 			class="bg-white rounded-lg shadow-sm p-4 mb-6 border border-sand/20"
 			transition:fly={{ y: 20, duration: 300 }}
 		>
-			<h2 class="text-lg font-semibold mb-3 text-charcoal">Kjøpes ({$activeItems.length})</h2>
+			<div class="flex justify-between items-center mb-3">
+				<h2 class="text-lg font-semibold text-charcoal">Må kjøpes ({$activeItems.length})</h2>
+				<p class="text-xs text-charcoal/60 italic">Nyeste først</p>
+			</div>
 
 			{#if $activeItems.length === 0}
 				<p class="text-center text-charcoal/60 py-4" transition:fade>Ingen elementer å vise</p>
@@ -329,12 +357,24 @@
 											<span class="font-medium">{item.title}</span>
 											{#if item.quantity && item.quantity > 1}
 												<span class="ml-2 px-2 py-0.5 bg-sand/20 rounded-full text-sm">
-													{item.quantity}
+													{item.quantity} stk
+												</span>
+											{/if}
+											{#if isRecentlyAdded(item)}
+												<span
+													class="ml-2 px-2 py-0.5 bg-pine/10 text-pine rounded text-xs font-medium"
+												>
+													Ny
 												</span>
 											{/if}
 										</div>
 										{#if item.note}
 											<p class="text-sm text-charcoal/70 mt-1">{item.note}</p>
+										{/if}
+										{#if item.createdAt}
+											<p class="text-xs text-charcoal/50 mt-1">
+												{formatRelativeTime(item.createdAt)}
+											</p>
 										{/if}
 									</div>
 
@@ -371,7 +411,9 @@
 			>
 				<!-- Accordion header -->
 				<div
-					class="flex justify-between items-center mb-3 cursor-pointer"
+					class={`flex justify-between items-center cursor-pointer ${
+						isCompletedAccordionOpen ? 'mb-3' : ''
+					}`}
 					onclick={toggleAccordion}
 					aria-expanded={isCompletedAccordionOpen}
 					role="button"
@@ -393,7 +435,7 @@
 								clip-rule="evenodd"
 							/>
 						</svg>
-						Fullførte ({$completedItems.length})
+						Kjøpt ({$completedItems.length})
 					</h2>
 
 					<div class="flex gap-2">
@@ -417,7 +459,7 @@
 					<ul class="space-y-2 mt-4" transition:slide={{ duration: 300 }}>
 						{#each $completedItems as item (item.id)}
 							<li
-								class="flex items-center gap-3 p-3 hover:bg-sand/10 transition-colors rounded-md"
+								class="flex items-center gap-3 p-4 hover:bg-sand/10 transition-colors rounded-md"
 								transition:slide={{ duration: 300 }}
 							>
 								<!-- Checkbox -->
@@ -452,18 +494,30 @@
 											<span
 												class="ml-2 px-2 py-0.5 bg-sand/20 rounded-full text-sm line-through text-charcoal/60"
 											>
-												{item.quantity}
+												{item.quantity} stk
+											</span>
+										{/if}
+										{#if isRecentlyAdded(item)}
+											<span
+												class="ml-2 px-2 py-0.5 bg-pine/10 text-pine rounded text-xs font-medium opacity-50"
+											>
+												Ny
 											</span>
 										{/if}
 									</div>
 									{#if item.note}
 										<p class="text-sm text-charcoal/50 mt-1 line-through">{item.note}</p>
 									{/if}
+									{#if item.createdAt}
+										<p class="text-xs text-charcoal/50 mt-1">
+											{formatRelativeTime(item.createdAt)}
+										</p>
+									{/if}
 								</div>
 
 								<!-- Delete button -->
 								<button
-									class="text-red-500/70 hover:text-red-700"
+									class="text-red-500 hover:text-red-700 p-1"
 									onclick={() => deleteItem(item.id)}
 									aria-label="Slett element"
 								>
