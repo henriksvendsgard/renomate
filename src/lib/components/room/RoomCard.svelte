@@ -88,7 +88,7 @@
 >
 	<div class="flex flex-col h-full">
 		<!-- Room thumbnail or placeholder -->
-		<div class="h-32 bg-sand/20 rounded-lg overflow-hidden">
+		<div class="h-32 bg-sand/20 rounded-lg overflow-hidden relative">
 			{#if thumbnailUrl}
 				<img src={thumbnailUrl} alt={room.name} class="w-full h-full object-cover" />
 			{:else}

@@ -13,11 +13,22 @@ function createHousesStore() {
   return {
     subscribe,
     
-    // Load houses from the database
-    async load() {
+    // Load houses from the database for a specific user
+    async load(userId?: string) {
       if (browser) {
-        const houses = await houseService.getAll();
-        set(houses);
+        console.log('Houses store: Loading houses for user:', userId);
+        try {
+          const houses = userId ? 
+            await houseService.getAllForUser(userId) : 
+            await houseService.getAll();
+          console.log('Houses store: Loaded houses:', houses);
+          set(houses);
+        } catch (error) {
+          console.error('Houses store: Error loading houses:', error);
+          // Set empty array on error to avoid stuck loading state
+          set([]);
+          throw error;
+        }
       }
     },
     
@@ -25,7 +36,7 @@ function createHousesStore() {
     async add(house: Omit<House, 'id' | 'createdAt' | 'updatedAt'>) {
       if (browser) {
         const id = await houseService.add(house);
-        await this.load();
+        await this.load(house.userId);
         return id;
       }
     },
@@ -34,16 +45,22 @@ function createHousesStore() {
     async update(id: string, updates: Partial<Omit<House, 'id' | 'createdAt' | 'updatedAt'>>) {
       if (browser) {
         await houseService.update(id, updates);
-        await this.load();
+        const house = await houseService.getById(id);
+        if (house) {
+          await this.load(house.userId);
+        }
       }
     },
     
     // Delete a house and all its rooms
     async delete(id: string) {
       if (browser) {
+        const house = await houseService.getById(id);
         await houseService.delete(id);
-        await this.load();
-        await rooms.load(); // Reload rooms as well
+        if (house) {
+          await this.load(house.userId);
+          await rooms.load(); // Reload rooms as well
+        }
       }
     }
   };
@@ -56,10 +73,22 @@ function createRoomsStore() {
     subscribe,
     
     // Load rooms from the database
-    async load() {
+    async load(userId?: string) {
       if (browser) {
-        const rooms = await roomService.getAll();
-        set(rooms);
+        if (userId) {
+          // Get all houses for the user
+          const userHouses = await houseService.getAllForUser(userId);
+          // Get all rooms for those houses
+          const rooms = [];
+          for (const house of userHouses) {
+            const houseRooms = await roomService.getAllForHouse(house.id);
+            rooms.push(...houseRooms);
+          }
+          set(rooms);
+        } else {
+          const rooms = await roomService.getAll();
+          set(rooms);
+        }
       }
     },
     

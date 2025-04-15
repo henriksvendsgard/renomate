@@ -1,6 +1,16 @@
 import Dexie, { type Table } from 'dexie';
 import type { Room, Task, House, User } from '$lib/types';
 
+// Function to delete the database
+async function deleteDatabase() {
+  try {
+    await Dexie.delete('oppuss-db');
+    console.log('Database deleted successfully');
+  } catch (error) {
+    console.error('Error deleting database:', error);
+  }
+}
+
 export class OppussDatabase extends Dexie {
   houses!: Table<House, string>;
   rooms!: Table<Room, string>;
@@ -8,10 +18,34 @@ export class OppussDatabase extends Dexie {
   
   constructor() {
     super('oppuss-db');
-    this.version(3).stores({
-      houses: 'id, name, createdAt, updatedAt',
+    
+    // Set up database schema
+    this.version(4).stores({
+      houses: 'id, userId, name, createdAt, updatedAt',
       rooms: 'id, houseId, name, budget, deadline, createdAt, updatedAt',
       users: 'id, email, name, createdAt, updatedAt'
+    });
+
+    // Handle version changes
+    this.on('versionchange', (event) => {
+      const oldVersion = event.oldVersion ?? 0;
+      const newVersion = event.newVersion ?? 0;
+      
+      console.log(`Database version change detected: ${oldVersion} -> ${newVersion}`);
+      
+      // Only handle version changes when there's an actual upgrade
+      if (oldVersion < newVersion) {
+        console.log('Database upgrade in progress...');
+        
+        // Close the database connection to allow the upgrade to proceed
+        this.close();
+        
+        // Only reload if we're in the browser and it's a major version change
+        if (typeof window !== 'undefined' && Math.floor(oldVersion) !== Math.floor(newVersion)) {
+          console.log('Major version change detected, reloading page...');
+          window.location.reload();
+        }
+      }
     });
   }
 }
@@ -21,7 +55,17 @@ export const db = new OppussDatabase();
 // House operations
 export const houseService = {
   async getAll(): Promise<House[]> {
-    return await db.houses.toArray();
+    console.log('DB: Getting all houses');
+    const houses = await db.houses.toArray();
+    console.log('DB: Retrieved houses:', houses);
+    return houses;
+  },
+  
+  async getAllForUser(userId: string): Promise<House[]> {
+    console.log('DB: Getting houses for user:', userId);
+    const houses = await db.houses.where('userId').equals(userId).toArray();
+    console.log('DB: Retrieved houses for user:', houses);
+    return houses;
   },
   
   async getById(id: string): Promise<House | undefined> {
@@ -57,6 +101,14 @@ export const houseService = {
     
     // Delete the house
     await db.houses.delete(id);
+  },
+
+  // Add this method to delete all houses for a user when they delete their account
+  async deleteAllForUser(userId: string): Promise<void> {
+    const userHouses = await this.getAllForUser(userId);
+    for (const house of userHouses) {
+      await this.delete(house.id);
+    }
   }
 };
 
@@ -254,6 +306,9 @@ export const userService = {
         console.error(`User with ID ${userId} not found`);
         throw new Error('Bruker ikke funnet');
       }
+      
+      // Delete all houses (and their rooms) belonging to the user
+      await houseService.deleteAllForUser(userId);
       
       // Delete the user
       await db.users.delete(userId);

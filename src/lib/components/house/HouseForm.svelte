@@ -6,8 +6,12 @@
 
 	export let house: Partial<House> = {};
 	export let isEdit = false;
+	export let userId: string;
 
-	const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher<{
+		saved: { success: boolean; newId?: string };
+		cancel: void;
+	}>();
 
 	// Form values
 	let name = house.name || '';
@@ -48,34 +52,42 @@
 
 	// Submit the form
 	async function handleSubmit() {
+		console.log('Submit clicked');
 		if (!name.trim()) {
 			alert('Husnavn er påkrevd');
 			return;
 		}
 
-		if (isEdit && house.id) {
-			// Update existing house
-			await houses.update(house.id, {
-				name: name.trim(),
-				address: address.trim() || undefined,
-				photo: photo || undefined
-			});
+		try {
+			if (isEdit && house.id) {
+				// Update existing house
+				await houses.update(house.id, {
+					name: name.trim(),
+					address: address.trim() || undefined,
+					photo: photo || undefined
+				});
 
-			dispatch('saved', { success: true });
-		} else {
-			// Add new house
-			const id = await houses.add({
-				name: name.trim(),
-				address: address.trim() || undefined,
-				photo: photo || undefined
-			});
+				dispatch('saved', { success: true });
+			} else {
+				// Add new house
+				const id = await houses.add({
+					userId,
+					name: name.trim(),
+					address: address.trim() || undefined,
+					photo: photo || undefined
+				});
 
-			dispatch('saved', { success: true, newId: id });
+				dispatch('saved', { success: true, newId: id });
+			}
+		} catch (error) {
+			console.error('Error saving house:', error);
+			alert('Det oppstod en feil ved lagring av huset. Vennligst prøv igjen.');
 		}
 	}
 
 	// Cancel the form
 	function handleCancel() {
+		console.log('Cancel clicked');
 		dispatch('cancel');
 	}
 </script>

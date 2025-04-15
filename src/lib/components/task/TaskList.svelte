@@ -134,7 +134,7 @@
 
 	<!-- Add task form -->
 	{#if isAddingTask}
-		<div class="bg-sand/10 p-4 rounded-lg mb-6 border border-sand/20">
+		<div class="bg-white p-4 rounded-lg mb-6 border border-sand/20">
 			<h4 class="font-medium mb-3 text-charcoal">Legg til ny oppgave</h4>
 
 			<div class="space-y-3">

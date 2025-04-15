@@ -1,5 +1,6 @@
 export type House = {
     id: string;
+    userId: string;  // Add this field to associate houses with users
     name: string;
     address?: string;
     photo?: string;  // Optional base64 or URL for the house photo
