@@ -8,6 +8,7 @@
 	let fileInput: HTMLInputElement;
 	let isUploading = false;
 	let uploadProgress = 0;
+	let selectedIndex = -1;
 
 	// Keep photos in sync with room store
 	$: {
@@ -70,6 +71,16 @@
 				photos: updatedPhotos
 			});
 		}
+	}
+
+	// Show fullsize photo in modal
+	function selectPhoto(index: number) {
+		selectedIndex = index;
+	}
+
+	// Close the photo modal
+	function closeModal() {
+		selectedIndex = -1;
 	}
 </script>
 
@@ -140,11 +151,12 @@
 						<img
 							src={photo}
 							alt="Room photo {index + 1}"
-							class="w-full h-full object-cover rounded-lg"
+							class="w-full h-full object-cover rounded-lg cursor-pointer"
+							on:click={() => selectPhoto(index)}
 						/>
 						<button
-							class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-							on:click={() => deletePhoto(index)}
+							class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full"
+							on:click|stopPropagation={() => deletePhoto(index)}
 							aria-label="Delete photo"
 						>
 							<svg
@@ -165,4 +177,47 @@
 			</div>
 		{/if}
 	</div>
+
+	<!-- Photo modal -->
+	{#if selectedIndex >= 0 && selectedIndex < photos.length}
+		<div
+			class="fixed inset-0 bg-charcoal/80 flex items-center justify-center z-50 p-4"
+			on:click={closeModal}
+			on:keydown={(e) => e.key === 'Escape' && closeModal()}
+			role="dialog"
+			aria-label="Photo view"
+			tabindex="-1"
+		>
+			<div class="max-w-5xl max-h-[90vh] relative" on:click|stopPropagation>
+				<!-- Add a better background and shadow for the image -->
+				<div class="bg-snow rounded-lg shadow-lg">
+					<img
+						src={photos[selectedIndex]}
+						alt="Room photo"
+						class="max-w-full max-h-[85vh] object-contain rounded"
+						style="min-height: 200px; min-width: 200px;"
+					/>
+				</div>
+
+				<button
+					on:click={closeModal}
+					class="absolute top-2 right-2 bg-white/80 text-charcoal p-1.5 rounded-full hover:bg-white"
+					aria-label="Close photo"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-5 w-5"
+						viewBox="0 0 20 20"
+						fill="currentColor"
+					>
+						<path
+							fill-rule="evenodd"
+							d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+							clip-rule="evenodd"
+						/>
+					</svg>
+				</button>
+			</div>
+		</div>
+	{/if}
 </div>

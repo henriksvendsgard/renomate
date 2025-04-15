@@ -2,26 +2,44 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { rooms } from '$lib/stores/rooms';
+	import type { Room, Task } from '$lib/types';
 	import TaskList from '$lib/components/task/TaskList.svelte';
 	import PhotoUploader from '$lib/components/photo/PhotoUploader.svelte';
 	import RoomForm from '$lib/components/room/RoomForm.svelte';
 	import { goto } from '$app/navigation';
 	import { clearThumbnailCache } from '$lib/services/photos';
+	import { tweened } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
 
 	// Get room ID from the route
 	const roomId = $page.params.roomId;
 
-	let room: ReturnType<typeof getRoomData>;
 	let isLoading = true;
 	let isEditingRoom = false;
 	let currentTab = 'tasks'; // 'tasks' or 'photos'
 
-	// Helper to get room data safely
-	function getRoomData() {
-		const roomData = $rooms.find((r) => r.id === roomId);
-		if (!roomData) return null;
-		return roomData;
+	// Calculate progress percentage
+	function getProgressPercentage(room: Room | null): number {
+		if (!room) return 0;
+		const completedTasks = room.tasks.filter((task: Task) => task.done).length;
+		const totalTasks = room.tasks.length;
+		const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+		console.debug(
+			`Progress calculation: ${completedTasks}/${totalTasks} tasks complete = ${progress}%`
+		);
+		return progress;
 	}
+
+	// Get current room from the store
+	$: currentRoom = $rooms.find((r) => r.id === roomId);
+	$: room = currentRoom || null;
+	$: progress = getProgressPercentage(room);
+	$: completedTaskCount = room?.tasks.filter((t) => t.done).length ?? 0;
+	$: totalTaskCount = room?.tasks.length ?? 0;
+	$: spent = getRoomSpent(room);
+	$: remaining = room ? room.budget - spent : 0;
+	$: roomPhotos = room?.photos || [];
+	$: roomTasks = room?.tasks || [];
 
 	// Format currency for display
 	function formatCurrency(amount: number) {
@@ -43,14 +61,6 @@
 			day: 'numeric',
 			year: 'numeric'
 		}).format(date);
-	}
-
-	// Calculate progress percentage
-	function getProgressPercentage() {
-		if (!room) return 0;
-		const completedTasks = room.tasks.filter((task) => task.done).length;
-		const totalTasks = room.tasks.length;
-		return totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 	}
 
 	// Delete the room
@@ -78,9 +88,11 @@
 	}
 
 	// Calculate spent amount for this room
-	function getRoomSpent() {
+	function getRoomSpent(room: Room | null): number {
 		if (!room) return 0;
-		return room.tasks.reduce((sum, task) => sum + (task.cost || 0), 0);
+		return room.tasks
+			.filter((task: Task) => task.done === true)
+			.reduce((sum: number, task: Task) => sum + (task.cost || 0), 0);
 	}
 
 	// Switch tabs
@@ -137,9 +149,17 @@
 		}
 	}
 
+	// Create a tweened store for the progress value
+	const tweenedProgress = tweened(0, {
+		duration: 400,
+		easing: cubicOut
+	});
+
+	// Update the tweened progress whenever the actual progress changes
+	$: tweenedProgress.set(progress);
+
 	onMount(async () => {
 		await rooms.load();
-		room = getRoomData();
 		isLoading = false;
 
 		// Log photo info after loading
@@ -147,14 +167,6 @@
 			logPhotoInfo();
 		}
 	});
-
-	// Reactively update room data when the rooms store changes
-	$: room = getRoomData();
-	$: progress = getProgressPercentage();
-	$: spent = getRoomSpent();
-	$: remaining = room ? room.budget - spent : 0;
-	$: roomPhotos = room && room.photos && Array.isArray(room.photos) ? room.photos : [];
-	$: roomTasks = room && room.tasks && Array.isArray(room.tasks) ? room.tasks : [];
 </script>
 
 <div class="max-w-6xl mx-auto p-4 sm:p-6">
@@ -244,12 +256,15 @@
 						<div>
 							<h3 class="text-sm font-medium text-charcoal/70 mb-2">Progress</h3>
 							<div class="w-full bg-sand/30 rounded-full h-3.5">
-								<div class="bg-pine h-3.5 rounded-full" style="width: {progress}%"></div>
+								<div
+									class="bg-pine h-3.5 rounded-full transition-all duration-300"
+									style="width: {$tweenedProgress}%"
+								></div>
 							</div>
 							<div class="mt-2 flex justify-between text-sm">
 								<span>{progress}% complete</span>
 								<span class="text-charcoal/70">
-									{room.tasks.filter((t) => t.done).length} of {room.tasks.length} tasks
+									{completedTaskCount} of {totalTaskCount} tasks
 								</span>
 							</div>
 						</div>

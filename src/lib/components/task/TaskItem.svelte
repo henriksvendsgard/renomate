@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { rooms } from '$lib/stores/rooms';
 	import type { Task } from '$lib/types';
+	import { crossfade } from 'svelte/transition';
 
 	export let task: Task;
 	export let roomId: string;
@@ -141,16 +142,16 @@
 			<div class="pt-0.5">
 				<button
 					on:click={toggleComplete}
-					class="w-5 h-5 border rounded-full flex items-center justify-center
+					class="w-5 h-5 border rounded-full flex items-center justify-center transition-all duration-300
                {task.done
-						? 'bg-pine border-pine text-snow'
-						: 'border-charcoal/30 hover:border-pine/70'}"
+						? 'bg-pine border-pine text-snow scale-100'
+						: 'border-charcoal/30 hover:border-pine/70 scale-95 hover:scale-100'}"
 					aria-label={task.done ? 'Mark as incomplete' : 'Mark as complete'}
 				>
 					{#if task.done}
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							class="h-3 w-3"
+							class="h-3 w-3 transition-transform duration-300"
 							viewBox="0 0 20 20"
 							fill="currentColor"
 						>
@@ -167,7 +168,11 @@
 			<!-- Task content -->
 			<div class="flex-grow">
 				<div class="flex justify-between items-start">
-					<h3 class="font-medium {task.done ? 'line-through text-charcoal/60' : 'text-charcoal'}">
+					<h3
+						class="font-medium transition-all duration-300 {task.done
+							? 'line-through text-charcoal/60'
+							: 'text-charcoal'}"
+					>
 						{task.title}
 					</h3>
 

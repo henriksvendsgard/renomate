@@ -2,6 +2,8 @@
 	import type { Task } from '$lib/types';
 	import TaskItem from './TaskItem.svelte';
 	import { rooms } from '$lib/stores/rooms';
+	import { flip } from 'svelte/animate';
+	import { fade, fly } from 'svelte/transition';
 
 	export let tasks: Task[] = [];
 	export let roomId: string;
@@ -183,7 +185,7 @@
 	<!-- Tasks list -->
 	<div class="bg-white rounded-lg border border-sand/20 divide-y divide-sand/10">
 		{#if filteredTasks.length === 0}
-			<div class="py-6 text-center text-charcoal/60">
+			<div class="py-6 text-center text-charcoal/60" transition:fade>
 				<p>No tasks found</p>
 				<button on:click={toggleAddTaskForm} class="mt-2 text-sm text-clay hover:underline">
 					Add your first task
@@ -191,7 +193,13 @@
 			</div>
 		{:else}
 			{#each filteredTasks as task (task.id)}
-				<TaskItem {task} {roomId} {showCost} />
+				<div
+					animate:flip={{ duration: 400 }}
+					in:fade={{ duration: 200 }}
+					out:fade={{ duration: 200 }}
+				>
+					<TaskItem {task} {roomId} {showCost} />
+				</div>
 			{/each}
 		{/if}
 	</div>

@@ -217,6 +217,8 @@ function createRoomsStore() {
     async toggleTaskCompletion(roomId: string, taskId: string) {
       if (browser) {
         let newDoneState = false;
+        let taskCost = 0;
+        console.debug(`Toggling completion for task ${taskId} in room ${roomId}`);
         
         // Update UI optimistically
         update(rooms => {
@@ -225,6 +227,8 @@ function createRoomsStore() {
             const task = room.tasks.find(t => t.id === taskId);
             if (task) {
               newDoneState = !task.done;
+              taskCost = task.cost || 0;
+              console.debug(`Task ${taskId}: changing done state from ${task.done} to ${newDoneState}, cost: ${taskCost}`);
               
               return rooms.map(r => 
                 r.id === roomId 
@@ -245,6 +249,7 @@ function createRoomsStore() {
         // Then update the database
         try {
           await taskService.updateTask(roomId, taskId, { done: newDoneState });
+          console.debug(`Task ${taskId} completion state updated in database. Will affect total by ${newDoneState ? '+' : '-'}${taskCost}`);
         } catch (error) {
           console.error('Failed to toggle task completion:', error);
           // In case of failure, reload from database to ensure consistency
@@ -264,23 +269,28 @@ export const totalBudget = derived(rooms, $rooms => {
 });
 
 // Derived store for spent amount (based on task costs)
-export const totalSpent = derived(rooms, $rooms => {
-  return $rooms.reduce((sum, room) => {
-    // Filter to only include completed tasks
-    const completedTasks = room.tasks.filter(task => task.done === true);
+export const totalSpent = derived(rooms, ($rooms) => {
+  console.debug('Recalculating total spent across all rooms');
+  const total = $rooms.reduce((total, room) => {
+    console.debug(`Calculating spent for room ${room.id} (${room.name})`);
+    const roomTotal = room.tasks
+      .filter(task => {
+        const isDone = task.done === true;
+        const cost = Number(task.cost) || 0;
+        console.debug(`Task ${task.id}: done=${isDone}, cost=${cost}, will ${isDone ? 'include' : 'exclude'} in total`);
+        return isDone;
+      })
+      .reduce((sum, task) => {
+        const cost = Number(task.cost) || 0;
+        return sum + cost;
+      }, 0);
     
-    // Calculate total spent for completed tasks
-    const roomSpent = completedTasks.reduce((taskSum, task) => {
-      // Ensure task.cost is a number
-      const cost = typeof task.cost === 'number' ? task.cost : 0;
-      return taskSum + cost;
-    }, 0);
-    
-    // Log for debugging purposes
-    console.debug(`Room ${room.id}: ${completedTasks.length} completed tasks of ${room.tasks.length} total, spent: ${roomSpent}`);
-    
-    return sum + roomSpent;
+    console.debug(`Room ${room.id} total spent: ${roomTotal}`);
+    return total + roomTotal;
   }, 0);
+  
+  console.debug('Final total spent:', total);
+  return total;
 });
 
 // Derived store for remaining budget
