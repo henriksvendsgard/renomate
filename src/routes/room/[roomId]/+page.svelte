@@ -23,11 +23,7 @@
 		if (!room) return 0;
 		const completedTasks = room.tasks.filter((task: Task) => task.done).length;
 		const totalTasks = room.tasks.length;
-		const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-		console.debug(
-			`Progress calculation: ${completedTasks}/${totalTasks} tasks complete = ${progress}%`
-		);
-		return progress;
+		return totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 	}
 
 	// Get current room from the store
@@ -43,9 +39,9 @@
 
 	// Format currency for display
 	function formatCurrency(amount: number) {
-		return new Intl.NumberFormat('en-US', {
+		return new Intl.NumberFormat('nb-NO', {
 			style: 'currency',
-			currency: 'USD',
+			currency: 'NOK',
 			minimumFractionDigits: 0,
 			maximumFractionDigits: 0
 		}).format(amount);
@@ -53,10 +49,10 @@
 
 	// Format the date for display
 	function formatDate(dateString: string) {
-		if (!dateString) return 'No deadline';
+		if (!dateString) return 'Ingen frist';
 
 		const date = new Date(dateString);
-		return new Intl.DateTimeFormat('en-US', {
+		return new Intl.DateTimeFormat('nb-NO', {
 			month: 'long',
 			day: 'numeric',
 			year: 'numeric'
@@ -69,7 +65,7 @@
 
 		if (
 			confirm(
-				`Are you sure you want to delete the room "${room.name}"? This action cannot be undone.`
+				`Er du sikker på at du vil slette rommet "${room.name}"? Denne handlingen kan ikke angres.`
 			)
 		) {
 			await rooms.deleteRoom(roomId);
@@ -104,48 +100,14 @@
 			// Clear thumbnail cache to ensure high-resolution thumbnails
 			clearThumbnailCache();
 
-			// Only reload if we actually need to - if there are no photos or if there was an issue before
+			// Only reload if we actually need to
 			if (
 				!room?.photos ||
 				room.photos.length === 0 ||
 				(room.photos.length > 0 && roomPhotos.length === 0)
 			) {
-				console.log('Switching to photos tab, reloading room data');
-				rooms.load().then(() => {
-					// Log photo info after loading
-					logPhotoInfo();
-				});
-			} else {
-				console.log('Photos already loaded, skipping reload');
-				// Just log existing photo info
-				logPhotoInfo();
+				rooms.load();
 			}
-		}
-	}
-
-	// Diagnostic function to check photo storage
-	function logPhotoInfo() {
-		if (!room) return;
-
-		console.log('Room photos info:');
-		console.log('- Photos array:', room.photos ? 'exists' : 'not defined');
-		console.log('- Is array:', Array.isArray(room.photos));
-		console.log('- Length:', room.photos ? room.photos.length : 0);
-
-		if (room.photos && room.photos.length > 0) {
-			console.log('- First photo type:', typeof room.photos[0]);
-			console.log(
-				'- First photo starts with:',
-				typeof room.photos[0] === 'string'
-					? room.photos[0].substring(0, 20) + '...'
-					: 'not a string'
-			);
-
-			// Count how many photos are valid
-			const validPhotos = room.photos.filter(
-				(photo) => photo && typeof photo === 'string' && photo.startsWith('data:')
-			);
-			console.log(`- Valid photos: ${validPhotos.length} of ${room.photos.length}`);
 		}
 	}
 
@@ -161,11 +123,6 @@
 	onMount(async () => {
 		await rooms.load();
 		isLoading = false;
-
-		// Log photo info after loading
-		if (room) {
-			logPhotoInfo();
-		}
 	});
 </script>
 
@@ -185,21 +142,21 @@
 					clip-rule="evenodd"
 				/>
 			</svg>
-			<span>Back to Dashboard</span>
+			<span>Tilbake til oversikt</span>
 		</a>
 	</div>
 
 	{#if isLoading}
 		<div class="py-10 text-center text-charcoal/70">
-			<p>Loading room details...</p>
+			<p>Laster romdetaljer...</p>
 		</div>
 	{:else if !room}
 		<div class="bg-white rounded-lg border border-sand/20 p-8 text-center">
-			<h3 class="text-lg font-medium text-charcoal mb-2">Room not found</h3>
+			<h3 class="text-lg font-medium text-charcoal mb-2">Rom ikke funnet</h3>
 			<p class="text-charcoal/70 mb-6">
-				The room you're looking for doesn't exist or has been deleted.
+				Rommet du leter etter eksisterer ikke eller har blitt slettet.
 			</p>
-			<a href="/" class="btn btn-primary">Back to Dashboard</a>
+			<a href="/" class="btn btn-primary">Tilbake til oversikt</a>
 		</div>
 	{:else}
 		<!-- Room Header -->
@@ -230,7 +187,7 @@
 											/>
 										</svg>
 									</span>
-									Deadline: {formatDate(room.deadline)}
+									Frist: {formatDate(room.deadline)}
 								</div>
 							{/if}
 						</div>
@@ -240,13 +197,13 @@
 								on:click={toggleEditMode}
 								class="btn bg-sand/20 text-charcoal hover:bg-sand/40 text-sm"
 							>
-								Edit Room
+								Rediger rom
 							</button>
 							<button
 								on:click={deleteRoom}
 								class="btn bg-red-500/10 text-red-600 hover:bg-red-500/20 text-sm"
 							>
-								Delete
+								Slett
 							</button>
 						</div>
 					</div>
@@ -254,7 +211,7 @@
 					<!-- Progress and Budget Info -->
 					<div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div>
-							<h3 class="text-sm font-medium text-charcoal/70 mb-2">Progress</h3>
+							<h3 class="text-sm font-medium text-charcoal/70 mb-2">Fremgang</h3>
 							<div class="w-full bg-sand/30 rounded-full h-3.5">
 								<div
 									class="bg-pine h-3.5 rounded-full transition-all duration-300"
@@ -262,26 +219,26 @@
 								></div>
 							</div>
 							<div class="mt-2 flex justify-between text-sm">
-								<span>{progress}% complete</span>
+								<span>{progress}% fullført</span>
 								<span class="text-charcoal/70">
-									{completedTaskCount} of {totalTaskCount} tasks
+									{completedTaskCount} av {totalTaskCount} oppgaver
 								</span>
 							</div>
 						</div>
 
 						<div>
-							<h3 class="text-sm font-medium text-charcoal/70 mb-2">Budget</h3>
+							<h3 class="text-sm font-medium text-charcoal/70 mb-2">Budsjett</h3>
 							<div class="grid grid-cols-3 gap-2">
 								<div class="p-3 bg-sand/10 rounded">
-									<div class="text-sm text-charcoal/70">Total</div>
+									<div class="text-sm text-charcoal/70">Totalt</div>
 									<div class="font-semibold">{formatCurrency(room.budget)}</div>
 								</div>
 								<div class="p-3 bg-sand/10 rounded">
-									<div class="text-sm text-charcoal/70">Spent</div>
+									<div class="text-sm text-charcoal/70">Brukt</div>
 									<div class="font-semibold">{formatCurrency(spent)}</div>
 								</div>
 								<div class="p-3 bg-sand/10 rounded">
-									<div class="text-sm text-charcoal/70">Remaining</div>
+									<div class="text-sm text-charcoal/70">Gjenstående</div>
 									<div class="font-semibold {remaining >= 0 ? 'text-pine' : 'text-red-500'}">
 										{formatCurrency(remaining)}
 									</div>
@@ -302,7 +259,7 @@
 						: 'border-transparent text-charcoal/60 hover:text-charcoal/80 hover:border-sand/50'}"
 					on:click={() => setTab('tasks')}
 				>
-					Tasks
+					Oppgaver
 				</button>
 				<button
 					class="px-4 py-2 border-b-2 font-medium text-sm {currentTab === 'photos'
@@ -310,7 +267,7 @@
 						: 'border-transparent text-charcoal/60 hover:text-charcoal/80 hover:border-sand/50'}"
 					on:click={() => setTab('photos')}
 				>
-					Photos
+					Bilder
 				</button>
 			</div>
 		</div>

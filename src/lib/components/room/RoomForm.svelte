@@ -16,12 +16,12 @@
 	// Submit the form
 	async function handleSubmit() {
 		if (!name.trim()) {
-			alert('Room name is required');
+			alert('Romnavn er påkrevd');
 			return;
 		}
 
 		if (budget < 0) {
-			alert('Budget cannot be negative');
+			alert('Budsjett kan ikke være negativt');
 			return;
 		}
 
@@ -58,21 +58,21 @@
 
 <div class="bg-white rounded-lg border border-sand/20 p-6 shadow-sm">
 	<h2 class="text-xl font-medium mb-6 text-charcoal">
-		{isEdit ? `Edit ${room.name}` : 'Add New Room'}
+		{isEdit ? `Rediger ${room.name}` : 'Legg til nytt rom'}
 	</h2>
 
 	<form on:submit|preventDefault={handleSubmit} class="space-y-5">
 		<!-- Room Name -->
 		<div>
 			<label for="room-name" class="block text-sm font-medium text-charcoal/80 mb-1">
-				Room Name
+				Romnavn
 			</label>
 			<input
 				id="room-name"
 				type="text"
 				bind:value={name}
 				required
-				placeholder="e.g. Kitchen, Bathroom, etc."
+				placeholder="f.eks. Kjøkken, Bad, etc."
 				class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay"
 			/>
 		</div>
@@ -80,17 +80,17 @@
 		<!-- Budget -->
 		<div>
 			<label for="room-budget" class="block text-sm font-medium text-charcoal/80 mb-1">
-				Budget
+				Budsjett
 			</label>
 			<div class="relative">
-				<span class="absolute left-3 top-1/2 -translate-y-1/2 text-charcoal/60">$</span>
+				<span class="absolute left-3 top-1/2 -translate-y-1/2 text-charcoal/60">kr</span>
 				<input
 					id="room-budget"
 					type="number"
 					bind:value={budget}
 					min="0"
 					step="1"
-					placeholder="Enter budget amount"
+					placeholder="Angi budsjettbeløp"
 					class="w-full p-2 pl-8 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay"
 				/>
 			</div>
@@ -99,7 +99,7 @@
 		<!-- Deadline -->
 		<div>
 			<label for="room-deadline" class="block text-sm font-medium text-charcoal/80 mb-1">
-				Deadline (optional)
+				Frist (valgfritt)
 			</label>
 			<input
 				id="room-deadline"
@@ -112,14 +112,14 @@
 		<!-- Form Actions -->
 		<div class="flex gap-3 pt-2">
 			<button type="submit" class="btn btn-success">
-				{isEdit ? 'Update Room' : 'Create Room'}
+				{isEdit ? 'Oppdater rom' : 'Opprett rom'}
 			</button>
 			<button
 				type="button"
 				class="btn bg-charcoal/10 text-charcoal hover:bg-charcoal/20"
 				on:click={handleCancel}
 			>
-				Cancel
+				Avbryt
 			</button>
 		</div>
 	</form>

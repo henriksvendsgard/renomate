@@ -27,7 +27,7 @@
 					class="flex flex-col items-center p-2 {isHomePage
 						? 'text-clay'
 						: 'text-charcoal/60 hover:text-charcoal'}"
-					aria-label="Home"
+					aria-label="Hjem"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -43,7 +43,7 @@
 							d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
 						/>
 					</svg>
-					<span class="text-xs mt-1">Home</span>
+					<span class="text-xs mt-1">Hjem</span>
 				</a>
 
 				<!-- Settings Link -->
@@ -52,7 +52,7 @@
 					class="flex flex-col items-center p-2 {isSettingsPage
 						? 'text-clay'
 						: 'text-charcoal/60 hover:text-charcoal'}"
-					aria-label="Settings"
+					aria-label="Innstillinger"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +73,7 @@
 							d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
 						/>
 					</svg>
-					<span class="text-xs mt-1">Settings</span>
+					<span class="text-xs mt-1">Innstillinger</span>
 				</a>
 			</nav>
 		</div>

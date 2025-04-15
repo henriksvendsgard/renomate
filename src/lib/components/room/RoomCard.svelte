@@ -18,11 +18,11 @@
 
 	// Format the date for display
 	function formatDate(dateString: string) {
-		if (!dateString) return 'No deadline';
+		if (!dateString) return 'Ingen frist';
 
 		const date = new Date(dateString);
-		return new Intl.DateTimeFormat('en-US', {
-			month: 'short',
+		return new Intl.DateTimeFormat('nb-NO', {
+			month: 'long',
 			day: 'numeric',
 			year: 'numeric'
 		}).format(date);
@@ -30,9 +30,9 @@
 
 	// Format budget as currency
 	function formatCurrency(amount: number) {
-		return new Intl.NumberFormat('en-US', {
+		return new Intl.NumberFormat('nb-NO', {
 			style: 'currency',
-			currency: 'USD',
+			currency: 'NOK',
 			minimumFractionDigits: 0,
 			maximumFractionDigits: 0
 		}).format(amount);
@@ -61,7 +61,7 @@
 			try {
 				thumbnailUrl = await getThumbnail(room.photos[0]);
 			} catch (error) {
-				console.error('Error creating thumbnail:', error);
+				// Error handling without console.log
 			}
 		}
 	});
@@ -107,10 +107,10 @@
 								: 'bg-pine text-snow'}"
 					>
 						{daysRemaining > 0
-							? `${daysRemaining} days left`
+							? `${daysRemaining} dager igjen`
 							: daysRemaining === 0
-								? 'Due today'
-								: `${Math.abs(daysRemaining)} days overdue`}
+								? 'Forfaller i dag'
+								: `${Math.abs(daysRemaining)} dager på overtid`}
 					</div>
 				{/if}
 			{/if}
@@ -125,7 +125,7 @@
 					<div class="bg-pine h-2.5 rounded-full" style="width: {progressPercentage}%"></div>
 				</div>
 				<div class="mt-1 text-xs text-charcoal/70">
-					{completedTasks} of {totalTasks} tasks completed
+					{completedTasks} av {totalTasks} oppgaver fullført
 				</div>
 			</div>
 
@@ -149,7 +149,7 @@
 									/>
 								</svg>
 							</span>
-							{formatDate(room.deadline)}
+							Frist: {formatDate(room.deadline)}
 						</div>
 					{/if}
 				</div>

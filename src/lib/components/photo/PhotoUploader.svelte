@@ -56,16 +56,15 @@
 				uploadProgress = 0;
 			}, 500);
 		} catch (error) {
-			console.error('Error processing images:', error);
 			isUploading = false;
 			uploadProgress = 0;
-			alert('There was an error processing your images. Please try again.');
+			alert('Det oppstod en feil ved behandling av bildene. Vennligst prøv igjen.');
 		}
 	}
 
 	// Delete photo
 	async function deletePhoto(index: number) {
-		if (confirm('Are you sure you want to delete this photo?')) {
+		if (confirm('Er du sikker på at du vil slette dette bildet?')) {
 			const updatedPhotos = [...photos.slice(0, index), ...photos.slice(index + 1)];
 			await rooms.updateRoom(roomId, {
 				photos: updatedPhotos
@@ -86,7 +85,7 @@
 
 <div>
 	<div class="flex justify-between items-center mb-4">
-		<h3 class="text-lg font-medium text-charcoal">Photos</h3>
+		<h3 class="text-lg font-medium text-charcoal">Bilder</h3>
 
 		<!-- Upload button -->
 		<button
@@ -106,7 +105,7 @@
 					clip-rule="evenodd"
 				/>
 			</svg>
-			{isUploading ? 'Uploading...' : 'Add Photos'}
+			{isUploading ? 'Laster opp...' : 'Legg til bilder'}
 		</button>
 
 		<!-- Hidden file input -->
@@ -139,9 +138,9 @@
 	<div class="bg-white rounded-lg border border-sand/20 p-4">
 		{#if !photos || photos.length === 0}
 			<div class="text-center py-8 text-charcoal/70">
-				<p>No photos added yet</p>
+				<p>Ingen bilder lagt til ennå</p>
 				<button on:click={openFileInput} class="mt-2 text-sm text-clay hover:underline">
-					Add your first photo
+					Legg til ditt første bilde
 				</button>
 			</div>
 		{:else}
@@ -150,14 +149,14 @@
 					<div class="relative aspect-square group">
 						<img
 							src={photo}
-							alt="Room photo {index + 1}"
+							alt="Rombilde {index + 1}"
 							class="w-full h-full object-cover rounded-lg cursor-pointer"
 							on:click={() => selectPhoto(index)}
 						/>
 						<button
 							class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full"
 							on:click|stopPropagation={() => deletePhoto(index)}
-							aria-label="Delete photo"
+							aria-label="Slett bilde"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -185,15 +184,14 @@
 			on:click={closeModal}
 			on:keydown={(e) => e.key === 'Escape' && closeModal()}
 			role="dialog"
-			aria-label="Photo view"
+			aria-label="Bildevisning"
 			tabindex="-1"
 		>
 			<div class="max-w-5xl max-h-[90vh] relative" on:click|stopPropagation>
-				<!-- Add a better background and shadow for the image -->
 				<div class="bg-snow rounded-lg shadow-lg">
 					<img
 						src={photos[selectedIndex]}
-						alt="Room photo"
+						alt="Rombilde"
 						class="max-w-full max-h-[85vh] object-contain rounded"
 						style="min-height: 200px; min-width: 200px;"
 					/>
@@ -202,7 +200,7 @@
 				<button
 					on:click={closeModal}
 					class="absolute top-2 right-2 bg-white/80 text-charcoal p-1.5 rounded-full hover:bg-white"
-					aria-label="Close photo"
+					aria-label="Lukk bilde"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"

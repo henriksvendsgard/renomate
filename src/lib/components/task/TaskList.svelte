@@ -58,7 +58,7 @@
 	// Add a new task
 	async function addTask() {
 		if (!newTaskTitle.trim()) {
-			alert('Task title cannot be empty');
+			alert('Oppgavetittel kan ikke være tom');
 			return;
 		}
 
@@ -76,8 +76,7 @@
 			newTaskCost = undefined;
 			isAddingTask = false;
 		} catch (error) {
-			console.error('Error adding task:', error);
-			alert('There was an error adding your task. Please try again.');
+			alert('Det oppstod en feil ved opprettelse av oppgaven. Vennligst prøv igjen.');
 		}
 	}
 </script>
@@ -85,7 +84,7 @@
 <div>
 	<!-- Task list header and controls -->
 	<div class="flex justify-between items-center mb-4">
-		<h3 class="text-lg font-medium text-charcoal">Tasks</h3>
+		<h3 class="text-lg font-medium text-charcoal">Oppgaver</h3>
 
 		<div class="flex items-center gap-3">
 			<!-- Toggle completed tasks visibility -->
@@ -111,7 +110,7 @@
 						</svg>
 					{/if}
 				</span>
-				Show completed
+				Vis fullførte
 			</button>
 
 			<!-- Add task button -->
@@ -128,7 +127,7 @@
 						clip-rule="evenodd"
 					/>
 				</svg>
-				Add Task
+				Legg til oppgave
 			</button>
 		</div>
 	</div>
@@ -136,7 +135,7 @@
 	<!-- Add task form -->
 	{#if isAddingTask}
 		<div class="bg-sand/10 p-4 rounded-lg mb-6 border border-sand/20">
-			<h4 class="font-medium mb-3 text-charcoal">Add New Task</h4>
+			<h4 class="font-medium mb-3 text-charcoal">Legg til ny oppgave</h4>
 
 			<div class="space-y-3">
 				<div>
@@ -144,7 +143,7 @@
 						type="text"
 						bind:value={newTaskTitle}
 						class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay"
-						placeholder="Task name"
+						placeholder="Oppgavenavn"
 					/>
 				</div>
 
@@ -152,12 +151,14 @@
 					<textarea
 						bind:value={newTaskNote}
 						class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay h-20 resize-none"
-						placeholder="Add notes (optional)"
+						placeholder="Legg til notater (valgfritt)"
 					></textarea>
 				</div>
 
 				<div>
-					<label for="task-cost" class="block text-sm text-charcoal/70 mb-1">Cost (optional)</label>
+					<label for="task-cost" class="block text-sm text-charcoal/70 mb-1"
+						>Kostnad (valgfritt)</label
+					>
 					<input
 						id="task-cost"
 						type="number"
@@ -165,17 +166,17 @@
 						min="0"
 						step="1"
 						class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay"
-						placeholder="Cost"
+						placeholder="Kostnad"
 					/>
 				</div>
 
 				<div class="flex space-x-2 pt-1">
-					<button on:click={addTask} class="btn btn-success text-sm"> Add Task </button>
+					<button on:click={addTask} class="btn btn-success text-sm"> Legg til oppgave </button>
 					<button
 						on:click={toggleAddTaskForm}
 						class="btn bg-charcoal/10 text-charcoal text-sm hover:bg-charcoal/20"
 					>
-						Cancel
+						Avbryt
 					</button>
 				</div>
 			</div>
@@ -186,9 +187,9 @@
 	<div class="bg-white rounded-lg border border-sand/20 divide-y divide-sand/10">
 		{#if filteredTasks.length === 0}
 			<div class="py-6 text-center text-charcoal/60" transition:fade>
-				<p>No tasks found</p>
+				<p>Ingen oppgaver funnet</p>
 				<button on:click={toggleAddTaskForm} class="mt-2 text-sm text-clay hover:underline">
-					Add your first task
+					Legg til din første oppgave
 				</button>
 			</div>
 		{:else}
