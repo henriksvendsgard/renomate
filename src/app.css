@@ -1,0 +1,35 @@
+@import 'tailwindcss';
+
+@theme {
+    --color-snow: #F9F9F9;
+    --color-charcoal: #333333;
+    --color-sand: #F5F5F5;
+    --color-clay: #E0E0E0;
+    --color-pine: #008000;
+}
+
+/* Base styles for the Oppuss app */
+body {
+  @apply bg-snow text-charcoal min-h-screen;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-medium;
+}
+
+.btn {
+  @apply px-4 py-2 rounded focus:outline-none transition-colors;
+}
+
+.btn-primary {
+  @apply bg-sand text-charcoal hover:bg-clay hover:text-snow;
+}
+
+.btn-success {
+  @apply bg-pine text-snow hover:opacity-90;
+}
+
+.card {
+  @apply bg-white rounded-lg shadow p-4 border border-sand/20;
+}
