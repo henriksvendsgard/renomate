@@ -1,23 +1,39 @@
 import { houseService, roomService } from '$lib/services/db';
 import type { House, Room } from '$lib/types';
+import { get } from 'svelte/store';
+import { authStore } from '$lib/stores/authStore';
 
 /**
  * Service for importing/exporting app data
  */
 
 /**
- * Export all house and room data as a JSON string
+ * Export all house and room data as a JSON string for the current user
  */
 export async function exportData(): Promise<string> {
   try {
-    // Get all houses and rooms from the database
-    const houses = await houseService.getAll();
-    const rooms = await roomService.getAll();
+    // Get the current user ID from the auth store
+    const currentUser = get(authStore).user;
+    
+    if (!currentUser || !currentUser.id) {
+      throw new Error('No logged in user found');
+    }
+    
+    // Get only houses that belong to the current user
+    const houses = await houseService.getAllForUser(currentUser.id);
+    
+    // Collect all room IDs from these houses
+    const rooms: Room[] = [];
+    for (const house of houses) {
+      const houseRooms = await roomService.getAllForHouse(house.id);
+      rooms.push(...houseRooms);
+    }
     
     // Create an export object with metadata
     const exportData = {
       version: 2, // Increment version for new data structure
       timestamp: new Date().toISOString(),
+      userId: currentUser.id,
       data: {
         houses,
         rooms
