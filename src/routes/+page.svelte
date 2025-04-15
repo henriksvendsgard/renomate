@@ -1,34 +1,24 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { rooms, totalBudget, totalSpent, remainingBudget } from '$lib/stores/rooms';
-	import RoomCard from '$lib/components/room/RoomCard.svelte';
-	import RoomForm from '$lib/components/room/RoomForm.svelte';
+	import { houses } from '$lib/stores/rooms';
+	import HouseCard from '$lib/components/house/HouseCard.svelte';
+	import HouseForm from '$lib/components/house/HouseForm.svelte';
 
-	let showAddRoomForm = false;
+	let showAddHouseForm = false;
 	let isLoading = true;
 
-	// Format currency for display
-	function formatCurrency(amount: number) {
-		return new Intl.NumberFormat('nb-NO', {
-			style: 'currency',
-			currency: 'NOK',
-			minimumFractionDigits: 0,
-			maximumFractionDigits: 0
-		}).format(amount);
+	// Toggle add house form
+	function toggleAddHouseForm() {
+		showAddHouseForm = !showAddHouseForm;
 	}
 
-	// Toggle add room form
-	function toggleAddRoomForm() {
-		showAddRoomForm = !showAddRoomForm;
-	}
-
-	// Handle room saved event
-	function handleRoomSaved() {
-		showAddRoomForm = false;
+	// Handle house saved event
+	function handleHouseSaved() {
+		showAddHouseForm = false;
 	}
 
 	onMount(async () => {
-		await rooms.load();
+		await houses.load();
 		isLoading = false;
 	});
 </script>
@@ -39,60 +29,40 @@
 		<p class="text-charcoal/70 mt-1">Rom-for-rom oppussingsplanlegger</p>
 	</header>
 
-	<!-- Budget Overview -->
-	<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-		<div class="bg-white rounded-lg border border-sand/20 p-4 shadow-sm">
-			<h2 class="text-sm font-medium text-charcoal/60 mb-1">Totalt budsjett</h2>
-			<div class="text-2xl font-semibold text-charcoal">{formatCurrency($totalBudget)}</div>
-		</div>
-
-		<div class="bg-white rounded-lg border border-sand/20 p-4 shadow-sm">
-			<h2 class="text-sm font-medium text-charcoal/60 mb-1">Brukt</h2>
-			<div class="text-2xl font-semibold text-charcoal">{formatCurrency($totalSpent)}</div>
-		</div>
-
-		<div class="bg-white rounded-lg border border-sand/20 p-4 shadow-sm">
-			<h2 class="text-sm font-medium text-charcoal/60 mb-1">Gjenstående</h2>
-			<div class="text-2xl font-semibold {$remainingBudget >= 0 ? 'text-pine' : 'text-red-500'}">
-				{formatCurrency($remainingBudget)}
-			</div>
-		</div>
-	</div>
-
-	<!-- Rooms Section -->
+	<!-- Houses Section -->
 	<div class="mb-6 flex justify-between items-center">
-		<h2 class="text-xl font-semibold text-charcoal">Dine rom</h2>
-		<button on:click={toggleAddRoomForm} class="btn btn-primary">
-			{showAddRoomForm ? 'Avbryt' : 'Legg til rom'}
+		<h2 class="text-xl font-semibold text-charcoal">Dine hus</h2>
+		<button on:click={toggleAddHouseForm} class="btn btn-primary">
+			{showAddHouseForm ? 'Avbryt' : 'Legg til hus'}
 		</button>
 	</div>
 
-	<!-- Add Room Form -->
-	{#if showAddRoomForm}
+	<!-- Add House Form -->
+	{#if showAddHouseForm}
 		<div class="mb-8">
-			<RoomForm on:saved={handleRoomSaved} on:cancel={toggleAddRoomForm} />
+			<HouseForm on:saved={handleHouseSaved} on:cancel={toggleAddHouseForm} />
 		</div>
 	{/if}
 
-	<!-- Rooms Grid -->
+	<!-- Houses Grid -->
 	{#if isLoading}
 		<div class="py-10 text-center text-charcoal/70">
-			<p>Laster dine rom...</p>
+			<p>Laster dine hus...</p>
 		</div>
-	{:else if $rooms.length === 0}
+	{:else if $houses.length === 0}
 		<div class="bg-white rounded-lg border border-sand/20 p-8 text-center">
-			<h3 class="text-lg font-medium text-charcoal mb-2">Ingen rom lagt til ennå</h3>
+			<h3 class="text-lg font-medium text-charcoal mb-2">Ingen hus lagt til ennå</h3>
 			<p class="text-charcoal/70 mb-6">
-				Start planleggingen av oppussingen ved å legge til ditt første rom.
+				Start planleggingen av oppussingen ved å legge til ditt første hus.
 			</p>
-			<button on:click={toggleAddRoomForm} class="btn btn-primary">
-				Legg til ditt første rom
+			<button on:click={toggleAddHouseForm} class="btn btn-primary">
+				Legg til ditt første hus
 			</button>
 		</div>
 	{:else}
-		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-			{#each $rooms as room (room.id)}
-				<RoomCard {room} />
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+			{#each $houses as house (house.id)}
+				<HouseCard {house} />
 			{/each}
 		</div>
 	{/if}

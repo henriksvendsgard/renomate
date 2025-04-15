@@ -3,7 +3,7 @@
 	import type { Room } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
 
-	export let room: Partial<Room> = {};
+	export let room: Partial<Room> & { houseId: string } = { houseId: '' };
 	export let isEdit = false;
 
 	const dispatch = createEventDispatcher();
@@ -43,7 +43,8 @@
 				name: name.trim(),
 				budget,
 				deadline: formattedDeadline,
-				photos: []
+				photos: [],
+				houseId: room.houseId
 			});
 
 			dispatch('saved', { success: true, newId: id });

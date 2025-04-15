@@ -39,6 +39,10 @@
 			// Process images
 			const newPhotos = await processImages(fileInput.files);
 
+			if (newPhotos.length === 0) {
+				throw new Error('Ingen bilder ble behandlet');
+			}
+
 			// Update the room with new photos
 			const updatedPhotos = [...photos, ...newPhotos];
 			await rooms.updateRoom(roomId, {
@@ -55,10 +59,15 @@
 				isUploading = false;
 				uploadProgress = 0;
 			}, 500);
-		} catch (error) {
+		} catch (error: unknown) {
+			console.error('Error uploading photos:', error);
 			isUploading = false;
 			uploadProgress = 0;
-			alert('Det oppstod en feil ved behandling av bildene. Vennligst prøv igjen.');
+
+			// Only show error message if no photos were processed
+			if (error instanceof Error && error.message === 'Ingen bilder ble behandlet') {
+				alert('Ingen bilder ble lastet opp. Vennligst prøv igjen med gyldige bildefiler.');
+			}
 		}
 	}
 

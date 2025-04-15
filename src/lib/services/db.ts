@@ -1,24 +1,71 @@
 import Dexie, { type Table } from 'dexie';
-import type { Room, Task } from '$lib/types';
+import type { Room, Task, House } from '$lib/types';
 
 export class OppussDatabase extends Dexie {
+  houses!: Table<House, string>;
   rooms!: Table<Room, string>;
   
   constructor() {
     super('oppuss-db');
-    this.version(1).stores({
-      rooms: 'id, name, budget, deadline, createdAt, updatedAt'
-      // We don't need to define tasks table separately as they are stored within rooms
+    this.version(2).stores({
+      houses: 'id, name, createdAt, updatedAt',
+      rooms: 'id, houseId, name, budget, deadline, createdAt, updatedAt'
     });
   }
 }
 
 export const db = new OppussDatabase();
 
+// House operations
+export const houseService = {
+  async getAll(): Promise<House[]> {
+    return await db.houses.toArray();
+  },
+  
+  async getById(id: string): Promise<House | undefined> {
+    return await db.houses.get(id);
+  },
+  
+  async add(house: Omit<House, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    const now = new Date().toISOString();
+    const id = crypto.randomUUID();
+    const newHouse: House = {
+      ...house,
+      id,
+      createdAt: now,
+      updatedAt: now
+    };
+    await db.houses.add(newHouse);
+    return id;
+  },
+  
+  async update(id: string, updates: Partial<Omit<House, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void> {
+    const now = new Date().toISOString();
+    await db.houses.update(id, { ...updates, updatedAt: now });
+  },
+  
+  async delete(id: string): Promise<void> {
+    // First, get all rooms for this house
+    const rooms = await db.rooms.where('houseId').equals(id).toArray();
+    
+    // Delete all rooms
+    for (const room of rooms) {
+      await roomService.delete(room.id);
+    }
+    
+    // Delete the house
+    await db.houses.delete(id);
+  }
+};
+
 // Room operations
 export const roomService = {
   async getAll(): Promise<Room[]> {
     return await db.rooms.toArray();
+  },
+  
+  async getAllForHouse(houseId: string): Promise<Room[]> {
+    return await db.rooms.where('houseId').equals(houseId).toArray();
   },
   
   async getById(id: string): Promise<Room | undefined> {

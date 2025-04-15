@@ -1,5 +1,15 @@
+export type House = {
+    id: string;
+    name: string;
+    address?: string;
+    photo?: string;  // Optional base64 or URL for the house photo
+    createdAt?: string;
+    updatedAt?: string;
+};
+
 export type Room = {
     id: string;
+    houseId: string;  // Reference to the parent house
     name: string;
     budget: number;
     deadline: string;

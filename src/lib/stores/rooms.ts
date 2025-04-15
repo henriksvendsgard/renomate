@@ -1,10 +1,53 @@
 import { writable, derived } from 'svelte/store';
-import type { Room, Task } from '$lib/types';
-import { roomService, taskService } from '$lib/services/db';
+import type { Room, Task, House } from '$lib/types';
+import { roomService, houseService, taskService } from '$lib/services/db';
 import { browser } from '$app/environment';
 
-// Initialize with empty array
+// Initialize with empty arrays
+const initialHouses: House[] = [];
 const initialRooms: Room[] = [];
+
+function createHousesStore() {
+  const { subscribe, set, update } = writable<House[]>(initialHouses);
+
+  return {
+    subscribe,
+    
+    // Load houses from the database
+    async load() {
+      if (browser) {
+        const houses = await houseService.getAll();
+        set(houses);
+      }
+    },
+    
+    // Add a new house
+    async add(house: Omit<House, 'id' | 'createdAt' | 'updatedAt'>) {
+      if (browser) {
+        const id = await houseService.add(house);
+        await this.load();
+        return id;
+      }
+    },
+    
+    // Update a house
+    async update(id: string, updates: Partial<Omit<House, 'id' | 'createdAt' | 'updatedAt'>>) {
+      if (browser) {
+        await houseService.update(id, updates);
+        await this.load();
+      }
+    },
+    
+    // Delete a house and all its rooms
+    async delete(id: string) {
+      if (browser) {
+        await houseService.delete(id);
+        await this.load();
+        await rooms.load(); // Reload rooms as well
+      }
+    }
+  };
+}
 
 function createRoomsStore() {
   const { subscribe, set, update } = writable<Room[]>(initialRooms);
@@ -20,11 +63,18 @@ function createRoomsStore() {
       }
     },
     
+    // Load rooms for a specific house
+    async loadForHouse(houseId: string) {
+      if (browser) {
+        const rooms = await roomService.getAllForHouse(houseId);
+        set(rooms);
+      }
+    },
+    
     // Add a new room
     async add(room: Omit<Room, 'id' | 'createdAt' | 'updatedAt' | 'tasks'>) {
       if (browser) {
         const id = await roomService.add({ ...room, tasks: [] });
-        // Reload rooms to ensure we have the most up-to-date data
         await this.load();
         return id;
       }
@@ -34,14 +84,12 @@ function createRoomsStore() {
     async updateRoom(id: string, updates: Partial<Omit<Room, 'id' | 'createdAt' | 'updatedAt' | 'tasks'>>) {
       if (browser) {
         try {
-          // If updating photos, log the data for debugging
           if (updates.photos) {
             console.log('Updating room photos:', 
               updates.photos ? `${updates.photos.length} photos` : 'no photos'
             );
           }
           
-          // Perform optimistic UI update first
           update(rooms => {
             return rooms.map(room => {
               if (room.id === id) {
@@ -55,14 +103,10 @@ function createRoomsStore() {
             });
           });
           
-          // Then update in the database
           await roomService.update(id, updates);
-          
-          // Reload to ensure consistency
           await this.load();
         } catch (error) {
           console.error('Error updating room:', error);
-          // Reload to restore correct state
           await this.load();
           throw error;
         }
@@ -80,7 +124,6 @@ function createRoomsStore() {
     // Add a task to a room
     async addTask(roomId: string, task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) {
       if (browser) {
-        // First generate a temporary ID for optimistic UI update
         const tempId = crypto.randomUUID();
         const now = new Date().toISOString();
         const newTask: Task = {
@@ -90,7 +133,6 @@ function createRoomsStore() {
           updatedAt: now
         };
         
-        // Update the UI immediately
         update(rooms => {
           return rooms.map(room => 
             room.id === roomId 
@@ -99,11 +141,9 @@ function createRoomsStore() {
           );
         });
         
-        // Then perform the actual database operation
         try {
           const taskId = await taskService.addTask(roomId, task);
           
-          // Update the temporary task with the real ID
           update(rooms => {
             return rooms.map(room => 
               room.id === roomId 
@@ -119,7 +159,6 @@ function createRoomsStore() {
           
           return taskId;
         } catch (error) {
-          // If database operation fails, revert the optimistic update
           console.error('Failed to add task:', error);
           update(rooms => {
             return rooms.map(room => 
@@ -138,7 +177,6 @@ function createRoomsStore() {
       if (browser) {
         const now = new Date().toISOString();
         
-        // Update UI optimistically
         update(rooms => {
           return rooms.map(room => 
             room.id === roomId 
@@ -155,12 +193,10 @@ function createRoomsStore() {
           );
         });
         
-        // Then update the database
         try {
           await taskService.updateTask(roomId, taskId, updates);
         } catch (error) {
           console.error('Failed to update task:', error);
-          // In case of failure, reload from database to ensure consistency
           await this.load();
           throw error;
         }
@@ -170,10 +206,8 @@ function createRoomsStore() {
     // Delete a task from a room
     async deleteTask(roomId: string, taskId: string) {
       if (browser) {
-        // Store the task before deleting for potential recovery
         let deletedTask: Task | undefined;
         
-        // Update UI optimistically
         update(rooms => {
           const room = rooms.find(r => r.id === roomId);
           if (room) {
@@ -191,13 +225,11 @@ function createRoomsStore() {
           );
         });
         
-        // Then update the database
         try {
           await taskService.deleteTask(roomId, taskId);
         } catch (error) {
           console.error('Failed to delete task:', error);
           
-          // Restore the task in the UI if database operation fails
           if (deletedTask) {
             update(rooms => {
               return rooms.map(room => 
@@ -220,7 +252,6 @@ function createRoomsStore() {
         let taskCost = 0;
         console.debug(`Toggling completion for task ${taskId} in room ${roomId}`);
         
-        // Update UI optimistically
         update(rooms => {
           const room = rooms.find(r => r.id === roomId);
           if (room) {
@@ -246,13 +277,11 @@ function createRoomsStore() {
           return rooms;
         });
         
-        // Then update the database
         try {
           await taskService.updateTask(roomId, taskId, { done: newDoneState });
           console.debug(`Task ${taskId} completion state updated in database. Will affect total by ${newDoneState ? '+' : '-'}${taskCost}`);
         } catch (error) {
           console.error('Failed to toggle task completion:', error);
-          // In case of failure, reload from database to ensure consistency
           await this.load();
           throw error;
         }
@@ -261,42 +290,47 @@ function createRoomsStore() {
   };
 }
 
+export const houses = createHousesStore();
 export const rooms = createRoomsStore();
 
-// Derived store for total budget across all rooms
-export const totalBudget = derived(rooms, $rooms => {
-  return $rooms.reduce((sum, room) => sum + room.budget, 0);
+// Derived store for total budget across all rooms in a house
+export const getHouseBudget = (houseId: string) => derived(rooms, $rooms => {
+  return $rooms
+    .filter(room => room.houseId === houseId)
+    .reduce((sum, room) => sum + room.budget, 0);
 });
 
-// Derived store for spent amount (based on task costs)
-export const totalSpent = derived(rooms, ($rooms) => {
-  console.debug('Recalculating total spent across all rooms');
-  const total = $rooms.reduce((total, room) => {
-    console.debug(`Calculating spent for room ${room.id} (${room.name})`);
-    const roomTotal = room.tasks
-      .filter(task => {
-        const isDone = task.done === true;
-        const cost = Number(task.cost) || 0;
-        console.debug(`Task ${task.id}: done=${isDone}, cost=${cost}, will ${isDone ? 'include' : 'exclude'} in total`);
-        return isDone;
-      })
-      .reduce((sum, task) => {
-        const cost = Number(task.cost) || 0;
-        return sum + cost;
-      }, 0);
-    
-    console.debug(`Room ${room.id} total spent: ${roomTotal}`);
-    return total + roomTotal;
-  }, 0);
+// Derived store for spent amount in a house
+export const getHouseSpent = (houseId: string) => derived(rooms, ($rooms) => {
+  console.debug(`Recalculating total spent for house ${houseId}`);
+  const total = $rooms
+    .filter(room => room.houseId === houseId)
+    .reduce((total, room) => {
+      console.debug(`Calculating spent for room ${room.id} (${room.name})`);
+      const roomTotal = room.tasks
+        .filter(task => {
+          const isDone = task.done === true;
+          const cost = Number(task.cost) || 0;
+          console.debug(`Task ${task.id}: done=${isDone}, cost=${cost}, will ${isDone ? 'include' : 'exclude'} in total`);
+          return isDone;
+        })
+        .reduce((sum, task) => {
+          const cost = Number(task.cost) || 0;
+          return sum + cost;
+        }, 0);
+      
+      console.debug(`Room ${room.id} total spent: ${roomTotal}`);
+      return total + roomTotal;
+    }, 0);
   
   console.debug('Final total spent:', total);
   return total;
 });
 
-// Derived store for remaining budget
-export const remainingBudget = derived(
-  [totalBudget, totalSpent], 
-  ([$totalBudget, $totalSpent]) => {
-    return $totalBudget - $totalSpent;
+// Derived store for remaining budget in a house
+export const getHouseRemaining = (houseId: string) => derived(
+  [getHouseBudget(houseId), getHouseSpent(houseId)], 
+  ([$houseBudget, $houseSpent]) => {
+    return $houseBudget - $houseSpent;
   }
 ); 
