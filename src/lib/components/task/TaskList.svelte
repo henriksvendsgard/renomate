@@ -142,7 +142,7 @@
 					<input
 						type="text"
 						bind:value={newTaskTitle}
-						class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay"
+						class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-asphalt"
 						placeholder="Oppgavenavn"
 					/>
 				</div>
@@ -150,7 +150,7 @@
 				<div>
 					<textarea
 						bind:value={newTaskNote}
-						class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay h-20 resize-none"
+						class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-asphalt h-20 resize-none"
 						placeholder="Legg til notater (valgfritt)"
 					></textarea>
 				</div>
@@ -165,7 +165,7 @@
 						bind:value={newTaskCost}
 						min="0"
 						step="1"
-						class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay"
+						class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-asphalt"
 						placeholder="Kostnad"
 					/>
 				</div>
@@ -188,7 +188,7 @@
 		{#if filteredTasks.length === 0}
 			<div class="py-6 text-center text-charcoal/60" transition:fade>
 				<p>Ingen oppgaver funnet</p>
-				<button on:click={toggleAddTaskForm} class="mt-2 text-sm text-clay hover:underline">
+				<button on:click={toggleAddTaskForm} class="mt-2 text-sm text-asphalt hover:underline">
 					Legg til din første oppgave
 				</button>
 			</div>

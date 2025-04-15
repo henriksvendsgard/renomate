@@ -97,13 +97,13 @@
 			<input
 				type="text"
 				bind:value={editedTitle}
-				class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay"
+				class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-asphalt"
 				placeholder="Oppgavenavn"
 			/>
 
 			<textarea
 				bind:value={editedNote}
-				class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay h-20 resize-none"
+				class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-asphalt h-20 resize-none"
 				placeholder="Legg til notater (valgfritt)"
 			></textarea>
 
@@ -117,7 +117,7 @@
 					bind:value={editedCost}
 					min="0"
 					step="1"
-					class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay"
+					class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-asphalt"
 					placeholder="Kostnad"
 				/>
 			</div>

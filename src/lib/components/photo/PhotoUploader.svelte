@@ -148,7 +148,7 @@
 		{#if !photos || photos.length === 0}
 			<div class="text-center py-8 text-charcoal/70">
 				<p>Ingen bilder lagt til ennå</p>
-				<button on:click={openFileInput} class="mt-2 text-sm text-clay hover:underline">
+				<button on:click={openFileInput} class="mt-2 text-sm text-asphalt hover:underline">
 					Legg til ditt første bilde
 				</button>
 			</div>

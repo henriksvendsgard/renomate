@@ -98,7 +98,7 @@
 <div class="max-w-6xl mx-auto p-4 sm:p-6">
 	<!-- Back button -->
 	<div class="mb-6">
-		<a href="/" class="inline-flex items-center text-clay hover:text-charcoal transition-colors">
+		<a href="/" class="inline-flex items-center text-asphalt hover:text-charcoal transition-colors">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				class="h-5 w-5 mr-1"

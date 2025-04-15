@@ -172,7 +172,7 @@
 				bind:value={name}
 				required
 				placeholder="f.eks. Kjøkken, Bad, etc."
-				class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay"
+				class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-asphalt"
 			/>
 		</div>
 
@@ -190,7 +190,7 @@
 					min="0"
 					step="1"
 					placeholder="Angi budsjettbeløp"
-					class="w-full p-2 pl-8 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay"
+					class="w-full p-2 pl-8 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-asphalt"
 				/>
 			</div>
 		</div>
@@ -204,7 +204,7 @@
 				id="room-deadline"
 				type="date"
 				bind:value={deadline}
-				class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay"
+				class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-asphalt"
 			/>
 		</div>
 

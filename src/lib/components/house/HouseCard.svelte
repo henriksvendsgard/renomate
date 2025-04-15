@@ -60,7 +60,7 @@
 		{#if thumbnailUrl}
 			<img src={thumbnailUrl} alt={house.name} class="w-full h-full object-cover" />
 		{:else}
-			<div class="flex items-center justify-center h-full bg-sand/30 text-clay">
+			<div class="flex items-center justify-center h-full bg-sand/30 text-asphalt">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					class="h-16 w-16 opacity-60"

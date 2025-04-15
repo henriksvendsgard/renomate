@@ -25,8 +25,13 @@
 
 <div class="max-w-6xl mx-auto p-4 sm:p-6">
 	<header class="py-6">
-		<h1 class="text-3xl font-bold text-charcoal">Oppuss</h1>
-		<p class="text-charcoal/70 mt-1">Rom-for-rom oppussingsplanlegger</p>
+		<div class="flex items-center gap-3 mb-4">
+			<img src="/favicon.png" alt="Oppuss logo" class="w-16 h-16" />
+			<div>
+				<h1 class="text-3xl font-bold text-charcoal">Oppuss</h1>
+				<p class="text-charcoal/70 mt-1">Full oversikt over oppussingen</p>
+			</div>
+		</div>
 	</header>
 
 	<!-- Houses Section -->

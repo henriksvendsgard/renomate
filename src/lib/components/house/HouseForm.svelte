@@ -159,7 +159,7 @@
 				bind:value={name}
 				required
 				placeholder="f.eks. Hovedhus, Hytte, etc."
-				class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay"
+				class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-asphalt"
 			/>
 		</div>
 
@@ -173,7 +173,7 @@
 				type="text"
 				bind:value={address}
 				placeholder="Gateadresse"
-				class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-clay"
+				class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-asphalt"
 			/>
 		</div>
 

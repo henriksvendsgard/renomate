@@ -25,7 +25,7 @@
 				<a
 					href="/"
 					class="flex flex-col items-center p-2 {isHomePage
-						? 'text-clay'
+						? 'text-asphalt'
 						: 'text-charcoal/60 hover:text-charcoal'}"
 					aria-label="Hjem"
 				>
@@ -50,7 +50,7 @@
 				<a
 					href="/settings"
 					class="flex flex-col items-center p-2 {isSettingsPage
-						? 'text-clay'
+						? 'text-asphalt'
 						: 'text-charcoal/60 hover:text-charcoal'}"
 					aria-label="Innstillinger"
 				>
