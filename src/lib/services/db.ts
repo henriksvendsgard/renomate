@@ -1,15 +1,17 @@
 import Dexie, { type Table } from 'dexie';
-import type { Room, Task, House } from '$lib/types';
+import type { Room, Task, House, User } from '$lib/types';
 
 export class OppussDatabase extends Dexie {
   houses!: Table<House, string>;
   rooms!: Table<Room, string>;
+  users!: Table<User, string>;
   
   constructor() {
     super('oppuss-db');
-    this.version(2).stores({
+    this.version(3).stores({
       houses: 'id, name, createdAt, updatedAt',
-      rooms: 'id, houseId, name, budget, deadline, createdAt, updatedAt'
+      rooms: 'id, houseId, name, budget, deadline, createdAt, updatedAt',
+      users: 'id, email, name, createdAt, updatedAt'
     });
   }
 }
@@ -191,5 +193,74 @@ export const taskService = {
       tasks: updatedTasks,
       updatedAt: now
     });
+  }
+};
+
+// User operations
+export const userService = {
+  async getByEmail(email: string): Promise<User | undefined> {
+    return await db.users.where('email').equals(email).first();
+  },
+  
+  async register(userData: { email: string; password: string; name: string }): Promise<string> {
+    // Check if user already exists
+    const existingUser = await this.getByEmail(userData.email);
+    if (existingUser) {
+      throw new Error('User with this email already exists');
+    }
+    
+    const now = new Date().toISOString();
+    const id = crypto.randomUUID();
+    
+    // In a real application, you should hash the password
+    // For simplicity, we're storing it directly, but this is NOT secure
+    // TODO: Implement proper password hashing
+    const newUser: User = {
+      id,
+      email: userData.email,
+      password: userData.password, // Should be hashed in production
+      name: userData.name,
+      createdAt: now,
+      updatedAt: now
+    };
+    
+    await db.users.add(newUser);
+    return id;
+  },
+  
+  async login(email: string, password: string): Promise<User | null> {
+    const user = await this.getByEmail(email);
+    
+    if (!user) {
+      return null; // User not found
+    }
+    
+    // In a real app, you would compare hashed passwords
+    // This is simplified for demo purposes
+    if (user.password !== password) {
+      return null; // Password doesn't match
+    }
+    
+    return user;
+  },
+  
+  async deleteUser(userId: string): Promise<void> {
+    try {
+      console.log(`Attempting to delete user with ID: ${userId}`);
+      
+      // First check if user exists
+      const user = await db.users.get(userId);
+      if (!user) {
+        console.error(`User with ID ${userId} not found`);
+        throw new Error('Bruker ikke funnet');
+      }
+      
+      // Delete the user
+      await db.users.delete(userId);
+      console.log(`User ${userId} deleted successfully`);
+    } catch (error) {
+      console.error(`Error deleting user ${userId}:`, error);
+      throw error;
+    }
   }
 }; 

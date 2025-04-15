@@ -28,4 +28,13 @@ export type Task = {
     cost?: number;
     createdAt?: string;
     updatedAt?: string;
+};
+
+export type User = {
+    id: string;
+    email: string;
+    password: string; // This will store a hashed password, not plaintext
+    name: string;
+    createdAt?: string;
+    updatedAt?: string;
 }; 

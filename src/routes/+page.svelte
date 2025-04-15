@@ -3,6 +3,7 @@
 	import { houses } from '$lib/stores/rooms';
 	import HouseCard from '$lib/components/house/HouseCard.svelte';
 	import HouseForm from '$lib/components/house/HouseForm.svelte';
+	import { rooms } from '$lib/stores/rooms';
 
 	let showAddHouseForm = false;
 	let isLoading = true;
@@ -18,8 +19,14 @@
 	}
 
 	onMount(async () => {
-		await houses.load();
-		isLoading = false;
+		try {
+			// Load both houses and rooms data
+			await Promise.all([houses.load(), rooms.load()]);
+		} catch (error) {
+			console.error('Error loading data:', error);
+		} finally {
+			isLoading = false;
+		}
 	});
 </script>
 

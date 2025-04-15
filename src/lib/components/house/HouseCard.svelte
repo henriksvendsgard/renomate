@@ -21,14 +21,17 @@
 	const houseSpent = getHouseSpent(house.id);
 	const houseRemaining = getHouseRemaining(house.id);
 
-	// Get rooms for this house
+	// Get rooms for this house with proper reactivity
 	$: houseRooms = $rooms.filter((room) => room.houseId === house.id);
 	$: completedRooms = houseRooms.filter(
 		(room) => room.tasks.length > 0 && room.tasks.every((task) => task.done)
 	).length;
 	$: totalRooms = houseRooms.length;
 	$: progress = totalRooms > 0 ? Math.round((completedRooms / totalRooms) * 100) : 0;
-	$: tweenedProgress.set(progress);
+	$: {
+		console.log(`House ${house.id} progress updated:`, { progress, completedRooms, totalRooms });
+		tweenedProgress.set(progress);
+	}
 
 	// Format currency for display
 	function formatCurrency(amount: number) {
