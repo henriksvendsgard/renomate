@@ -56,8 +56,8 @@
 		<div class="flex items-center gap-3 mb-4">
 			<img src="/favicon.png" alt="Oppuss logo" class="w-16 h-16" />
 			<div>
-				<h1 class="text-3xl font-bold text-charcoal">Renomate 😸</h1>
-				<p class="text-charcoal/70 mt-1">Din venn for oppussingen</p>
+				<h1 class="text-3xl text-charcoal">Renomate</h1>
+				<p class="text-charcoal/70 mt-1">- Din venn under oppussingen</p>
 			</div>
 		</div>
 	</header>
