@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getThumbnail } from '$lib/services/photos';
-	import type { Room } from '$lib/types';
+	import type { Room, Task } from '$lib/types';
 	import { onMount } from 'svelte';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
@@ -11,6 +11,8 @@
 	let completedTasks = 0;
 	let totalTasks = 0;
 	let progressPercentage = 0;
+	let spent = 0;
+	let remaining = 0;
 
 	// Create a tweened store for the progress value
 	const tweenedProgress = tweened(0, {
@@ -23,6 +25,10 @@
 		totalTasks = room.tasks.length;
 		progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 		tweenedProgress.set(progressPercentage);
+		spent = room.tasks
+			.filter((task: Task) => task.done)
+			.reduce((sum, task) => sum + (task.cost || 0), 0);
+		remaining = room.budget - spent;
 	}
 
 	// Format the date for display
@@ -65,10 +71,10 @@
 	}
 
 	onMount(async () => {
-		// Get the first photo as the thumbnail
-		if (room.photos && room.photos.length > 0) {
+		// Get the thumbnail if available
+		if (room.thumbnail) {
 			try {
-				thumbnailUrl = await getThumbnail(room.photos[0]);
+				thumbnailUrl = await getThumbnail(room.thumbnail);
 			} catch (error) {
 				// Error handling without console.log
 			}
@@ -82,14 +88,14 @@
 >
 	<div class="flex flex-col h-full">
 		<!-- Room thumbnail or placeholder -->
-		<div class="h-32 bg-sand/20 rounded-t overflow-hidden relative">
+		<div class="h-48 bg-sand/20 rounded-t-lg overflow-hidden">
 			{#if thumbnailUrl}
 				<img src={thumbnailUrl} alt={room.name} class="w-full h-full object-cover" />
 			{:else}
 				<div class="flex items-center justify-center h-full bg-sand/30 text-clay">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
-						class="h-12 w-12 opacity-60"
+						class="h-16 w-16 opacity-60"
 						fill="none"
 						viewBox="0 0 24 24"
 						stroke="currentColor"
@@ -125,48 +131,45 @@
 			{/if}
 		</div>
 
-		<div class="p-4 flex-grow">
-			<h2 class="text-lg font-semibold text-charcoal mb-2">{room.name}</h2>
+		<div class="p-6">
+			<div class="flex justify-between items-start mb-4">
+				<div>
+					<h2 class="text-xl font-semibold text-charcoal">{room.name}</h2>
+					{#if room.deadline}
+						<p class="text-charcoal/70 text-sm mt-1">Frist: {formatDate(room.deadline)}</p>
+					{/if}
+				</div>
+			</div>
 
-			<!-- Progress bar -->
-			<div class="mb-3">
+			<!-- Progress -->
+			<div class="mb-4">
 				<div class="w-full bg-sand/30 rounded-full h-2.5">
 					<div
 						class="bg-pine h-2.5 rounded-full transition-transform duration-700 ease-out"
 						style="width: {$tweenedProgress}%"
 					></div>
 				</div>
-				<div class="mt-1 text-xs text-charcoal/70">
-					{completedTasks} av {totalTasks} oppgaver fullført
+				<div class="mt-1 text-sm text-charcoal/70 flex justify-between">
+					<span>{progressPercentage}% fullført</span>
+					<span>{completedTasks} av {totalTasks} oppgaver</span>
 				</div>
 			</div>
 
-			<div class="flex justify-between items-center mt-4 text-sm">
-				<div>
-					{#if room.deadline}
-						<div class="text-charcoal/80">
-							<span class="inline-block mr-1">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="h-4 w-4 inline"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-									/>
-								</svg>
-							</span>
-							Frist: {formatDate(room.deadline)}
-						</div>
-					{/if}
+			<!-- Budget Overview -->
+			<div class="grid grid-cols-3 gap-3 mt-4">
+				<div class="text-center p-2 bg-sand/10 rounded">
+					<div class="text-sm text-charcoal/70">Budsjett</div>
+					<div class="font-medium">{formatCurrency(room.budget)}</div>
 				</div>
-				<div class="font-medium text-charcoal">
-					{formatCurrency(room.budget)}
+				<div class="text-center p-2 bg-sand/10 rounded">
+					<div class="text-sm text-charcoal/70">Brukt</div>
+					<div class="font-medium">{formatCurrency(spent)}</div>
+				</div>
+				<div class="text-center p-2 bg-sand/10 rounded">
+					<div class="text-sm text-charcoal/70">Gjenstående</div>
+					<div class="font-medium {remaining >= 0 ? 'text-pine' : 'text-red-500'}">
+						{formatCurrency(remaining)}
+					</div>
 				</div>
 			</div>
 		</div>

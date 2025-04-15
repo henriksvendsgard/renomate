@@ -13,6 +13,7 @@ export type Room = {
     name: string;
     budget: number;
     deadline: string;
+    thumbnail?: string; // Optional base64 or URL for the room thumbnail
     photos: string[]; // base64 or URL
     tasks: Task[];
     createdAt?: string;
