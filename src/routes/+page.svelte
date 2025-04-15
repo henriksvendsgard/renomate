@@ -107,7 +107,7 @@
 				></div>
 				<p>Laster dine hus...</p>
 			</div>
-		{:else if $houses.length === 0}
+		{:else if $houses.length === 0 && !showAddHouseForm}
 			<div class="bg-white rounded-lg border border-sand/20 p-8 text-center">
 				<h3 class="text-lg font-medium text-charcoal mb-2">Ingen hus lagt til ennå</h3>
 				<p class="text-charcoal/70 mb-6">
