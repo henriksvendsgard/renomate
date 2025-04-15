@@ -43,7 +43,7 @@
 	onMount(async () => {
 		if (house.photo) {
 			try {
-				thumbnailUrl = await getThumbnail(house.photo);
+				thumbnailUrl = await getThumbnail(house.photo, undefined, house.id);
 			} catch (error) {
 				console.error('Error loading thumbnail:', error);
 			}
@@ -56,7 +56,7 @@
 	class="block card transition-transform hover:scale-[1.02] hover:shadow-md"
 >
 	<!-- House Photo -->
-	<div class="h-48 bg-sand/20 rounded-t-lg overflow-hidden">
+	<div class="h-48 bg-sand/20 rounded-lg overflow-hidden">
 		{#if thumbnailUrl}
 			<img src={thumbnailUrl} alt={house.name} class="w-full h-full object-cover" />
 		{:else}

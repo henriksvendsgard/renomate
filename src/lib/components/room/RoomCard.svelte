@@ -74,7 +74,7 @@
 		// Get the thumbnail if available
 		if (room.thumbnail) {
 			try {
-				thumbnailUrl = await getThumbnail(room.thumbnail);
+				thumbnailUrl = await getThumbnail(room.thumbnail, undefined, room.id);
 			} catch (error) {
 				// Error handling without console.log
 			}
@@ -88,7 +88,7 @@
 >
 	<div class="flex flex-col h-full">
 		<!-- Room thumbnail or placeholder -->
-		<div class="h-48 bg-sand/20 rounded-t-lg overflow-hidden">
+		<div class="h-32 bg-sand/20 rounded-lg overflow-hidden">
 			{#if thumbnailUrl}
 				<img src={thumbnailUrl} alt={room.name} class="w-full h-full object-cover" />
 			{:else}

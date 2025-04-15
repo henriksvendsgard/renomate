@@ -237,7 +237,7 @@ export function clearThumbnailCache(): void {
 }
 
 // Get a thumbnail version of a base64 image (for previews)
-export function getThumbnail(base64Image: string, size = 500): Promise<string> {
+export function getThumbnail(base64Image: string, size = 500, key = ''): Promise<string> {
   return new Promise((resolve) => {
     try {
       // If the input is not a valid base64 image, return it as is
@@ -248,7 +248,7 @@ export function getThumbnail(base64Image: string, size = 500): Promise<string> {
       }
       
       // Generate a cache key - first 50 chars + image size should be enough for uniqueness
-      const cacheKey = base64Image.substring(0, 50) + size;
+      const cacheKey = base64Image.substring(0, 50) + size + key;
       
       // Check if we already have this thumbnail in cache
       if (thumbnailCache.has(cacheKey)) {
