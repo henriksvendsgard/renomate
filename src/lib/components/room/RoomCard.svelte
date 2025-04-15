@@ -2,6 +2,8 @@
 	import { getThumbnail } from '$lib/services/photos';
 	import type { Room } from '$lib/types';
 	import { onMount } from 'svelte';
+	import { tweened } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
 
 	export let room: Room;
 
@@ -10,10 +12,17 @@
 	let totalTasks = 0;
 	let progressPercentage = 0;
 
+	// Create a tweened store for the progress value
+	const tweenedProgress = tweened(0, {
+		duration: 600,
+		easing: cubicOut
+	});
+
 	$: {
 		completedTasks = room.tasks.filter((task) => task.done).length;
 		totalTasks = room.tasks.length;
 		progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+		tweenedProgress.set(progressPercentage);
 	}
 
 	// Format the date for display
@@ -122,7 +131,10 @@
 			<!-- Progress bar -->
 			<div class="mb-3">
 				<div class="w-full bg-sand/30 rounded-full h-2.5">
-					<div class="bg-pine h-2.5 rounded-full" style="width: {progressPercentage}%"></div>
+					<div
+						class="bg-pine h-2.5 rounded-full transition-transform duration-700 ease-out"
+						style="width: {$tweenedProgress}%"
+					></div>
 				</div>
 				<div class="mt-1 text-xs text-charcoal/70">
 					{completedTasks} av {totalTasks} oppgaver fullført

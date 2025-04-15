@@ -3,10 +3,18 @@
 	import { getHouseBudget, getHouseSpent, getHouseRemaining, rooms } from '$lib/stores/rooms';
 	import { getThumbnail } from '$lib/services/photos';
 	import { onMount } from 'svelte';
+	import { tweened } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
 
 	export let house: House;
 
 	let thumbnailUrl = '';
+
+	// Create a tweened store for the progress value
+	const tweenedProgress = tweened(0, {
+		duration: 600,
+		easing: cubicOut
+	});
 
 	// Get derived stores for this house
 	const houseBudget = getHouseBudget(house.id);
@@ -20,6 +28,7 @@
 	).length;
 	$: totalRooms = houseRooms.length;
 	$: progress = totalRooms > 0 ? Math.round((completedRooms / totalRooms) * 100) : 0;
+	$: tweenedProgress.set(progress);
 
 	// Format currency for display
 	function formatCurrency(amount: number) {
@@ -83,7 +92,10 @@
 		<!-- Progress -->
 		<div class="mb-4">
 			<div class="w-full bg-sand/30 rounded-full h-2.5">
-				<div class="bg-pine h-2.5 rounded-full" style="width: {progress}%"></div>
+				<div
+					class="bg-pine h-2.5 rounded-full transition-transform duration-700 ease-out"
+					style="width: {$tweenedProgress}%"
+				></div>
 			</div>
 			<div class="mt-1 text-sm text-charcoal/70 flex justify-between">
 				<span>{progress}% fullført</span>

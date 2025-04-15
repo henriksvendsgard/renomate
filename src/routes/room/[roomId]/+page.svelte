@@ -113,7 +113,7 @@
 
 	// Create a tweened store for the progress value
 	const tweenedProgress = tweened(0, {
-		duration: 400,
+		duration: 600,
 		easing: cubicOut
 	});
 
@@ -217,7 +217,7 @@
 							<h3 class="text-sm font-medium text-charcoal/70 mb-2">Fremgang</h3>
 							<div class="w-full bg-sand/30 rounded-full h-3.5">
 								<div
-									class="bg-pine h-3.5 rounded-full transition-all duration-300"
+									class="bg-pine h-3.5 rounded-full transition-transform duration-700 ease-out"
 									style="width: {$tweenedProgress}%"
 								></div>
 							</div>

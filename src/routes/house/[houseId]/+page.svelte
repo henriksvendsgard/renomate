@@ -12,6 +12,8 @@
 	import RoomForm from '$lib/components/room/RoomForm.svelte';
 	import HouseForm from '$lib/components/house/HouseForm.svelte';
 	import { goto } from '$app/navigation';
+	import { tweened } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
 
 	// Get house ID from the route
 	const houseId = $page.params.houseId;
@@ -19,6 +21,12 @@
 	let isLoading = true;
 	let showAddRoomForm = false;
 	let isEditingHouse = false;
+
+	// Create a tweened store for the progress value
+	const tweenedProgress = tweened(0, {
+		duration: 600,
+		easing: cubicOut
+	});
 
 	// Get derived stores for this house
 	const houseBudget = getHouseBudget(houseId);
@@ -33,6 +41,7 @@
 	).length;
 	$: totalRooms = houseRooms.length;
 	$: progress = totalRooms > 0 ? Math.round((completedRooms / totalRooms) * 100) : 0;
+	$: tweenedProgress.set(progress);
 
 	// Format currency for display
 	function formatCurrency(amount: number) {
@@ -159,7 +168,10 @@
 						<div>
 							<h3 class="text-sm font-medium text-charcoal/70 mb-2">Fremgang</h3>
 							<div class="w-full bg-sand/30 rounded-full h-3.5">
-								<div class="bg-pine h-3.5 rounded-full" style="width: {progress}%"></div>
+								<div
+									class="bg-pine h-3.5 rounded-full transition-transform duration-700 ease-out"
+									style="width: {$tweenedProgress}%"
+								></div>
 							</div>
 							<div class="mt-2 flex justify-between text-sm">
 								<span>{progress}% fullført</span>
