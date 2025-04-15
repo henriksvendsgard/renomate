@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie';
-import type { Room, Task, House, User } from '$lib/types';
+import type { Room, Task, House, User, ShoppingItem } from '$lib/types';
 
 // Function to delete the database
 async function deleteDatabase() {
@@ -15,15 +15,17 @@ export class OppussDatabase extends Dexie {
   houses!: Table<House, string>;
   rooms!: Table<Room, string>;
   users!: Table<User, string>;
+  shoppingItems!: Table<ShoppingItem, string>;
   
   constructor() {
     super('oppuss-db');
     
     // Set up database schema
-    this.version(4).stores({
+    this.version(5).stores({
       houses: 'id, userId, name, createdAt, updatedAt',
       rooms: 'id, houseId, name, budget, deadline, createdAt, updatedAt',
-      users: 'id, email, name, createdAt, updatedAt'
+      users: 'id, email, name, createdAt, updatedAt',
+      shoppingItems: 'id, userId, title, completed, category, createdAt, updatedAt'
     });
 
     // Handle version changes
@@ -310,6 +312,9 @@ export const userService = {
       // Delete all houses (and their rooms) belonging to the user
       await houseService.deleteAllForUser(userId);
       
+      // Delete all shopping items belonging to the user
+      await shoppingService.deleteAllForUser(userId);
+      
       // Delete the user
       await db.users.delete(userId);
       console.log(`User ${userId} deleted successfully`);
@@ -317,5 +322,57 @@ export const userService = {
       console.error(`Error deleting user ${userId}:`, error);
       throw error;
     }
+  }
+};
+
+// Shopping list operations
+export const shoppingService = {
+  async getAll(): Promise<ShoppingItem[]> {
+    return await db.shoppingItems.toArray();
+  },
+  
+  async getAllForUser(userId: string): Promise<ShoppingItem[]> {
+    return await db.shoppingItems.where('userId').equals(userId).toArray();
+  },
+  
+  async getById(id: string): Promise<ShoppingItem | undefined> {
+    return await db.shoppingItems.get(id);
+  },
+  
+  async add(item: Omit<ShoppingItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    const now = new Date().toISOString();
+    const id = crypto.randomUUID();
+    const newItem: ShoppingItem = {
+      ...item,
+      id,
+      createdAt: now,
+      updatedAt: now
+    };
+    await db.shoppingItems.add(newItem);
+    return id;
+  },
+  
+  async update(id: string, updates: Partial<Omit<ShoppingItem, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void> {
+    const now = new Date().toISOString();
+    await db.shoppingItems.update(id, { ...updates, updatedAt: now });
+  },
+  
+  async delete(id: string): Promise<void> {
+    await db.shoppingItems.delete(id);
+  },
+  
+  async toggleCompleted(id: string): Promise<void> {
+    const item = await this.getById(id);
+    if (item) {
+      await this.update(id, { completed: !item.completed });
+    }
+  },
+  
+  async deleteAllForUser(userId: string): Promise<void> {
+    await db.shoppingItems.where('userId').equals(userId).delete();
+  },
+  
+  async deleteCompleted(userId: string): Promise<void> {
+    await db.shoppingItems.where('userId').equals(userId).and(item => item.completed).delete();
   }
 }; 

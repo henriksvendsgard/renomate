@@ -40,8 +40,8 @@
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
+		"@lucide/svelte": "^0.488.0",
 		"@vite-pwa/sveltekit": "^1.0.0",
-		"dexie": "^4.0.11",
-		"lucide-react": "^0.488.0"
+		"dexie": "^4.0.11"
 	}
 }

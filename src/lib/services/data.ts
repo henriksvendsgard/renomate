@@ -1,5 +1,5 @@
-import { houseService, roomService } from '$lib/services/db';
-import type { House, Room } from '$lib/types';
+import { houseService, roomService, shoppingService } from '$lib/services/db';
+import type { House, Room, ShoppingItem } from '$lib/types';
 import { get } from 'svelte/store';
 import { authStore } from '$lib/stores/authStore';
 
@@ -29,14 +29,18 @@ export async function exportData(): Promise<string> {
       rooms.push(...houseRooms);
     }
     
+    // Get shopping items for the current user
+    const shoppingItems = await shoppingService.getAllForUser(currentUser.id);
+    
     // Create an export object with metadata
     const exportData = {
-      version: 2, // Increment version for new data structure
+      version: 3, // Increment version for new data structure with shopping items
       timestamp: new Date().toISOString(),
       userId: currentUser.id,
       data: {
         houses,
-        rooms
+        rooms,
+        shoppingItems
       }
     };
     
@@ -63,12 +67,15 @@ export async function importData(jsonString: string): Promise<{ success: boolean
     }
     
     // Check version compatibility
-    if (importData.version !== 2) {
+    if (importData.version < 2) {
       return { success: false, message: 'Incompatible data version' };
     }
     
     const houses = importData.data.houses as House[];
     const rooms = importData.data.rooms as Room[];
+    const shoppingItems = (importData.version >= 3 && importData.data.shoppingItems) 
+      ? importData.data.shoppingItems as ShoppingItem[]
+      : [];
     
     // Validate house data
     for (const house of houses) {
@@ -88,10 +95,27 @@ export async function importData(jsonString: string): Promise<{ success: boolean
       }
     }
     
+    // Validate shopping items if present
+    if (shoppingItems.length > 0) {
+      for (const item of shoppingItems) {
+        if (!item.id || !item.title || typeof item.completed !== 'boolean') {
+          return { success: false, message: 'Invalid shopping item data found' };
+        }
+      }
+    }
+    
     // Clear existing data
     const existingHouses = await houseService.getAll();
     for (const house of existingHouses) {
       await houseService.delete(house.id);
+    }
+    
+    // Clear existing shopping items if we're importing them
+    if (shoppingItems.length > 0 && importData.userId) {
+      const existingItems = await shoppingService.getAllForUser(importData.userId);
+      for (const item of existingItems) {
+        await shoppingService.delete(item.id);
+      }
     }
     
     // Import houses first
@@ -104,9 +128,16 @@ export async function importData(jsonString: string): Promise<{ success: boolean
       await roomService.add(room as any);
     }
     
+    // Import shopping items if present
+    if (shoppingItems.length > 0) {
+      for (const item of shoppingItems) {
+        await shoppingService.add(item as any);
+      }
+    }
+    
     return { 
       success: true, 
-      message: `Successfully imported ${houses.length} houses and ${rooms.length} rooms` 
+      message: `Successfully imported ${houses.length} houses, ${rooms.length} rooms${shoppingItems.length > 0 ? ` and ${shoppingItems.length} shopping items` : ''}` 
     };
   } catch (error) {
     console.error('Error importing data:', error);
@@ -127,9 +158,22 @@ export async function clearAllData(): Promise<{ success: boolean, message: strin
       await houseService.delete(house.id);
     }
     
+    // Get the current user ID from the auth store for shopping items
+    const currentUser = get(authStore).user;
+    let shoppingItemsDeleted = 0;
+    
+    // Delete shopping items for the current user if logged in
+    if (currentUser && currentUser.id) {
+      const items = await shoppingService.getAllForUser(currentUser.id);
+      for (const item of items) {
+        await shoppingService.delete(item.id);
+      }
+      shoppingItemsDeleted = items.length;
+    }
+    
     return { 
       success: true, 
-      message: `Successfully deleted ${houses.length} houses and all associated rooms` 
+      message: `Successfully deleted ${houses.length} houses, all associated rooms${shoppingItemsDeleted > 0 ? ` and ${shoppingItemsDeleted} shopping items` : ''}` 
     };
   } catch (error) {
     console.error('Error clearing data:', error);

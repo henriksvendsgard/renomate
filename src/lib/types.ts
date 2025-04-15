@@ -31,6 +31,19 @@ export type Task = {
     updatedAt?: string;
 };
 
+export type ShoppingItem = {
+    id: string;
+    userId: string;  // To associate items with specific users
+    title: string;
+    completed: boolean;
+    quantity: number;  // Default should be 1
+    note?: string;     // Optional comment/note for the item
+    unit?: string;     // e.g., kg, liters, pieces
+    category?: string; // e.g., building materials, paint, tools
+    createdAt?: string;
+    updatedAt?: string;
+};
+
 export type User = {
     id: string;
     email: string;
