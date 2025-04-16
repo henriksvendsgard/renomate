@@ -51,7 +51,7 @@
 	}
 </script>
 
-<div class="max-w-6xl mx-auto p-4 sm:p-6">
+<div class="max-w-6xl mx-auto px-4 sm:p-6">
 	<header class="py-6">
 		<div class="flex items-center gap-2 mb-4">
 			<img src="/renomate-logo.png" alt="Oppuss logo" class="w-16 h-16" />
