@@ -55,8 +55,8 @@
 
 <div class="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
 	<div class="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-		<img src="/oppuss-logo.png" alt="Oppuss logo" class="w-20 h-20 mx-auto mb-6" />
-		<h1 class="text-2xl font-bold text-center mb-6">Velkommen til Oppuss!</h1>
+		<img src="/renomate-logo.png" alt="renomate logo" class="w-20 h-20 mx-auto" />
+		<h1 class="text-2xl font-bold text-center mb-4 font-comfortaa">renomate</h1>
 		<p class="text-gray-600 text-center mb-6">Logg inn for å fortsette</p>
 
 		{#if error}
@@ -93,7 +93,7 @@
 			<div class="flex justify-center py-4">
 				<button
 					type="submit"
-					class="flex justify-center py-2 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-pine hover:bg-pine-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pine-dark"
+					class="w-full flex justify-center py-2 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-pine hover:bg-pine-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pine-dark"
 					disabled={loading}
 				>
 					{loading ? 'Logger inn...' : 'Logg inn'}

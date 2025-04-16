@@ -125,7 +125,7 @@
 					type="password"
 					id="confirmPassword"
 					bind:value={confirmPassword}
-					class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+					class="w-full px-3 py-2 mb-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
 					placeholder="Bekreft passordet ditt"
 					required
 				/>
@@ -134,7 +134,7 @@
 			<div>
 				<button
 					type="submit"
-					class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+					class="w-full flex justify-center py-2 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
 					disabled={loading}
 				>
 					{loading ? 'Oppretter konto...' : 'Registrer deg'}
