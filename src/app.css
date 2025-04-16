@@ -8,12 +8,15 @@
     --color-clay: #E0E0E0;
     --color-pine: #006600;
     --color-pine-dark: #004d00;
+
+    --font-body: 'Quicksand Variable', sans-serif;
+    --font-comfortaa: 'Comfortaa Variable', system-ui;
 }
 
 /* Base styles for the Oppuss app */
 body {
   @apply bg-snow text-charcoal min-h-screen;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-body);
 }
 
 h1, h2, h3, h4, h5, h6 {

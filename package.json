@@ -40,6 +40,8 @@
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
+		"@fontsource-variable/comfortaa": "^5.2.5",
+		"@fontsource-variable/quicksand": "^5.2.6",
 		"@lucide/svelte": "^0.488.0",
 		"@vite-pwa/sveltekit": "^1.0.0",
 		"dexie": "^4.0.11"

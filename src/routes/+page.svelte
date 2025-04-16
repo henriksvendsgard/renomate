@@ -53,11 +53,10 @@
 
 <div class="max-w-6xl mx-auto p-4 sm:p-6">
 	<header class="py-6">
-		<div class="flex items-center gap-3 mb-4">
-			<img src="/favicon.png" alt="Oppuss logo" class="w-16 h-16" />
+		<div class="flex items-center gap-2 mb-4">
+			<img src="/renomate-logo.png" alt="Oppuss logo" class="w-16 h-16" />
 			<div>
-				<h1 class="text-3xl text-charcoal">Renomate</h1>
-				<p class="text-charcoal/70 mt-1">- Din venn under oppussingen</p>
+				<h1 class="text-3xl text-charcoal font-comfortaa mt-3">renomate</h1>
 			</div>
 		</div>
 	</header>
@@ -65,7 +64,7 @@
 	<!-- Houses Section -->
 	{#if $authStore.isAuthenticated}
 		<div class="mb-6 flex justify-between items-center">
-			<h2 class="text-xl font-semibold text-charcoal">Dine hus</h2>
+			<h2 class="text-xl font-semibold text-charcoal">Mine hus</h2>
 			<button
 				class="btn btn-primary"
 				bind:this={addHouseButton}

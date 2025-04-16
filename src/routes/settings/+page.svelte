@@ -40,7 +40,6 @@
 
 		// User accepted installation
 		if (choiceResult.outcome === 'accepted') {
-			console.log('User accepted the installation');
 			canInstallPWA = false;
 			isInstalled = true;
 		}

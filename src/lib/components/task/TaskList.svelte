@@ -166,7 +166,7 @@
 						min="0"
 						step="1"
 						class="w-full p-2 border border-sand rounded focus:outline-none focus:ring-1 focus:ring-asphalt"
-						placeholder="Kostnad"
+						placeholder="Kostnad i kr"
 					/>
 				</div>
 

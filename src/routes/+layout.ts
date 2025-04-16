@@ -7,9 +7,6 @@ import type { LayoutLoad } from './$types';
 // Public routes that don't require authentication
 const publicRoutes = ['/login', '/register'];
 
-// Protected routes that require authentication (optional, for explicit clarity)
-const protectedRoutes = ['/', '/profile', '/settings', '/shopping'];
-
 // Helper to check if we're on a public route
 const isPublicRoute = (path: string) => {
   return publicRoutes.some(route => path === route || path.startsWith(`${route}/`));
