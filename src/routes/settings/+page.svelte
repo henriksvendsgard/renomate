@@ -248,7 +248,7 @@
 		</button>
 
 		{#if isAdvancedOpen}
-			<div class="px-6 pb-6 border-t border-sand/20">
+			<div class="px-6 pb-6 border-t border-sand/30">
 				<div class="space-y-4 mt-4">
 					<div>
 						<button

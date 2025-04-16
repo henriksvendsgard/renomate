@@ -144,7 +144,7 @@
 	{/if}
 
 	<!-- Photos grid -->
-	<div class="bg-white rounded-lg border border-sand/20 p-4">
+	<div class="bg-white rounded-lg border border-sand/30 p-4">
 		{#if !photos || photos.length === 0}
 			<div class="text-center py-8 text-charcoal/70">
 				<p>Ingen bilder lagt til ennå</p>

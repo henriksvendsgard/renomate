@@ -134,7 +134,7 @@
 
 	<!-- Add task form -->
 	{#if isAddingTask}
-		<div class="bg-white p-4 rounded-lg mb-6 border border-sand/20">
+		<div class="bg-white p-4 rounded-lg mb-6 border border-sand/30">
 			<h4 class="font-medium mb-3 text-charcoal">Legg til ny oppgave</h4>
 
 			<div class="space-y-3">
@@ -184,7 +184,7 @@
 	{/if}
 
 	<!-- Tasks list -->
-	<div class="bg-white rounded-lg border border-sand/20 divide-y divide-sand/10">
+	<div class="bg-white rounded-lg border border-sand/30 divide-y divide-sand/30">
 		{#if filteredTasks.length === 0}
 			<div class="py-6 text-center text-charcoal/60" transition:fade>
 				<p>Ingen oppgaver funnet</p>

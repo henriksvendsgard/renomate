@@ -110,7 +110,7 @@
 			<p>Laster husdetaljer...</p>
 		</div>
 	{:else if !currentHouse}
-		<div class="bg-white rounded-lg border border-sand/20 p-8 text-center">
+		<div class="bg-white rounded-lg border border-sand/30 p-8 text-center">
 			<h3 class="text-lg font-medium text-charcoal mb-2">Hus ikke funnet</h3>
 			<p class="text-charcoal/70 mb-6">
 				Huset du leter etter eksisterer ikke eller har blitt slettet.
@@ -129,7 +129,7 @@
 					userId={currentHouse.userId}
 				/>
 			{:else}
-				<div class="bg-white rounded-lg border border-sand/20 p-6 shadow-sm">
+				<div class="bg-white rounded-lg border border-sand/30 p-6 shadow-sm">
 					<div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
 						<div>
 							<h1 class="text-2xl font-bold text-charcoal">{currentHouse.name}</h1>
@@ -141,7 +141,7 @@
 						<div class="flex items-center gap-2">
 							<button
 								on:click={toggleEditMode}
-								class="btn bg-sand/20 text-charcoal hover:bg-sand/40 text-sm"
+								class="btn bg-sand/30 text-charcoal hover:bg-sand/40 text-sm"
 							>
 								Rediger hus
 							</button>
@@ -175,15 +175,15 @@
 						<div>
 							<h3 class="text-sm font-medium text-charcoal/70 mb-2">Budsjett</h3>
 							<div class="grid grid-cols-3 gap-2">
-								<div class="p-3 bg-sand/10 rounded">
+								<div class="p-3 bg-sand/30 rounded">
 									<div class="text-sm text-charcoal/70">Totalt</div>
 									<div class="font-semibold">{formatCurrency($houseBudget)}</div>
 								</div>
-								<div class="p-3 bg-sand/10 rounded">
+								<div class="p-3 bg-sand/30 rounded">
 									<div class="text-sm text-charcoal/70">Brukt</div>
 									<div class="font-semibold">{formatCurrency($houseSpent)}</div>
 								</div>
-								<div class="p-3 bg-sand/10 rounded">
+								<div class="p-3 bg-sand/30 rounded">
 									<div class="text-sm text-charcoal/70">Gjenstående</div>
 									<div class="font-semibold {$houseRemaining >= 0 ? 'text-pine' : 'text-red-500'}">
 										{formatCurrency($houseRemaining)}
@@ -213,7 +213,7 @@
 
 		<!-- Rooms Grid -->
 		{#if houseRooms.length === 0}
-			<div class="bg-white rounded-lg border border-sand/20 p-8 text-center">
+			<div class="bg-white rounded-lg border border-sand/30 p-8 text-center">
 				<h3 class="text-lg font-medium text-charcoal mb-2">Ingen rom lagt til ennå</h3>
 				<p class="text-charcoal/70 mb-6">
 					Start planleggingen av oppussingen ved å legge til ditt første rom.

@@ -59,7 +59,7 @@
 	class="block card transition-transform hover:scale-[1.02] hover:shadow-md"
 >
 	<!-- House Photo -->
-	<div class="h-48 bg-sand/20 rounded-lg overflow-hidden">
+	<div class="h-48 bg-sand/30 rounded-lg overflow-hidden">
 		{#if thumbnailUrl}
 			<img src={thumbnailUrl} alt={house.name} class="w-full h-full object-cover" />
 		{:else}
@@ -108,15 +108,15 @@
 
 		<!-- Budget Overview -->
 		<div class="grid grid-cols-3 gap-3 mt-4">
-			<div class="text-center p-2 bg-sand/10 rounded">
+			<div class="text-center p-2 bg-sand/30 rounded">
 				<div class="text-sm text-charcoal/70">Budsjett</div>
 				<div class="font-medium">{formatCurrency($houseBudget)}</div>
 			</div>
-			<div class="text-center p-2 bg-sand/10 rounded">
+			<div class="text-center p-2 bg-sand/30 rounded">
 				<div class="text-sm text-charcoal/70">Brukt</div>
 				<div class="font-medium">{formatCurrency($houseSpent)}</div>
 			</div>
-			<div class="text-center p-2 bg-sand/10 rounded">
+			<div class="text-center p-2 bg-sand/30 rounded">
 				<div class="text-sm text-charcoal/70">Gjenstående</div>
 				<div class="font-medium {$houseRemaining >= 0 ? 'text-pine' : 'text-red-500'}">
 					{formatCurrency($houseRemaining)}

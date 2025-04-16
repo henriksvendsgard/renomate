@@ -91,7 +91,7 @@
 	}
 </script>
 
-<div class="group border-b border-sand/20 py-3 px-2 hover:bg-sand/5 transition-colors">
+<div class="group border-b border-sand/30 py-3 px-2 hover:bg-sand/5 transition-colors">
 	{#if isEditing}
 		<!-- Edit Mode -->
 		<div class="space-y-3">

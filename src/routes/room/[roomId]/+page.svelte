@@ -144,7 +144,7 @@
 			<p>Laster romdetaljer...</p>
 		</div>
 	{:else if !room}
-		<div class="bg-white rounded-lg border border-sand/20 p-8 text-center">
+		<div class="bg-white rounded-lg border border-sand/30 p-8 text-center">
 			<h3 class="text-lg font-medium text-charcoal mb-2">Rom ikke funnet</h3>
 			<p class="text-charcoal/70 mb-6">
 				Rommet du leter etter eksisterer ikke eller har blitt slettet.
@@ -157,7 +157,7 @@
 			{#if isEditingRoom}
 				<RoomForm {room} isEdit={true} on:saved={handleRoomSaved} on:cancel={toggleEditMode} />
 			{:else}
-				<div class="bg-white rounded-lg border border-sand/20 p-6 shadow-sm">
+				<div class="bg-white rounded-lg border border-sand/30 p-6 shadow-sm">
 					<div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
 						<div>
 							<h1 class="text-2xl font-bold text-charcoal">{room.name}</h1>
@@ -188,7 +188,7 @@
 						<div class="flex items-center gap-2">
 							<button
 								on:click={toggleEditMode}
-								class="btn bg-sand/20 text-charcoal hover:bg-sand/40 text-sm"
+								class="btn bg-sand/30 text-charcoal hover:bg-sand/40 text-sm"
 							>
 								Rediger rom
 							</button>
@@ -222,15 +222,15 @@
 						<div>
 							<h3 class="text-sm font-medium text-charcoal/70 mb-2">Budsjett</h3>
 							<div class="grid grid-cols-3 gap-2">
-								<div class="p-3 bg-sand/10 rounded">
+								<div class="p-3 bg-sand/30 rounded">
 									<div class="text-sm text-charcoal/70">Totalt</div>
 									<div class="font-semibold">{formatCurrency(room.budget)}</div>
 								</div>
-								<div class="p-3 bg-sand/10 rounded">
+								<div class="p-3 bg-sand/30 rounded">
 									<div class="text-sm text-charcoal/70">Brukt</div>
 									<div class="font-semibold">{formatCurrency(spent)}</div>
 								</div>
-								<div class="p-3 bg-sand/10 rounded">
+								<div class="p-3 bg-sand/30 rounded">
 									<div class="text-sm text-charcoal/70">Gjenstående</div>
 									<div class="font-semibold {remaining >= 0 ? 'text-pine' : 'text-red-500'}">
 										{formatCurrency(remaining)}
@@ -244,7 +244,7 @@
 		</div>
 
 		<!-- Tab Navigation -->
-		<div class="border-b border-sand/20 mb-6">
+		<div class="border-b border-sand/30 mb-6">
 			<div class="flex -mb-px">
 				<button
 					class="px-4 py-2 border-b-2 font-medium text-sm {currentTab === 'tasks'

@@ -88,7 +88,7 @@
 >
 	<div class="flex flex-col h-full">
 		<!-- Room thumbnail or placeholder -->
-		<div class="h-32 bg-sand/20 rounded-lg overflow-hidden relative">
+		<div class="h-32 bg-sand/30 rounded-lg overflow-hidden relative">
 			{#if thumbnailUrl}
 				<img src={thumbnailUrl} alt={room.name} class="w-full h-full object-cover" />
 			{:else}
@@ -157,15 +157,15 @@
 
 			<!-- Budget Overview -->
 			<div class="grid grid-cols-3 gap-3 mt-4">
-				<div class="text-center p-2 bg-sand/10 rounded">
+				<div class="text-center p-2 bg-sand/30 rounded">
 					<div class="text-sm text-charcoal/70">Budsjett</div>
 					<div class="font-medium">{formatCurrency(room.budget)}</div>
 				</div>
-				<div class="text-center p-2 bg-sand/10 rounded">
+				<div class="text-center p-2 bg-sand/30 rounded">
 					<div class="text-sm text-charcoal/70">Brukt</div>
 					<div class="font-medium">{formatCurrency(spent)}</div>
 				</div>
-				<div class="text-center p-2 bg-sand/10 rounded">
+				<div class="text-center p-2 bg-sand/30 rounded">
 					<div class="text-sm text-charcoal/70">Gjenstående</div>
 					<div class="font-medium {remaining >= 0 ? 'text-pine' : 'text-red-500'}">
 						{formatCurrency(remaining)}

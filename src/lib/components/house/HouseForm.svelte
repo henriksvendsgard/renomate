@@ -92,7 +92,7 @@
 	}
 </script>
 
-<div class="bg-white rounded-lg border border-sand/20 p-6 shadow-sm">
+<div class="bg-white rounded-lg border border-sand/30 p-6 shadow-sm">
 	<h2 class="text-xl font-medium mb-6 text-charcoal">
 		{isEdit ? `Rediger ${house.name}` : 'Legg til nytt hus'}
 	</h2>
@@ -126,7 +126,7 @@
 			{:else}
 				<div class="flex items-center justify-center w-full">
 					<label
-						class="w-full h-32 flex flex-col items-center justify-center border-2 border-sand border-dashed rounded-lg cursor-pointer bg-sand/5 hover:bg-sand/10 transition-colors"
+						class="w-full h-32 flex flex-col items-center justify-center border-2 border-sand border-dashed rounded-lg cursor-pointer bg-sand/5 hover:bg-sand/30 transition-colors"
 					>
 						<div class="flex flex-col items-center justify-center pt-5 pb-6">
 							<svg

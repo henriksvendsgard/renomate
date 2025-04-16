@@ -180,7 +180,7 @@
 			e.preventDefault();
 			addItem();
 		}}
-		class="mb-6 bg-white rounded-lg shadow-sm p-4 border border-sand/20"
+		class="mb-6 bg-white rounded-lg shadow-sm p-4 border border-sand/30"
 	>
 		<div class="flex gap-2 mb-3">
 			<input
@@ -189,11 +189,11 @@
 				placeholder="Legg til nytt element..."
 				class="flex-grow p-2 border border-sand rounded-md focus:outline-none focus:ring-1 focus:ring-asphalt"
 			/>
-			<div class="flex items-center bg-sand/10 rounded-md px-2">
+			<div class="flex items-center bg-sand/30 rounded-md px-2">
 				<button
 					type="button"
 					onclick={() => (newItemQuantity = Math.max(1, newItemQuantity - 1))}
-					class="w-8 h-8 flex items-center justify-center text-charcoal hover:bg-sand/20 rounded-full"
+					class="w-8 h-8 flex items-center justify-center text-charcoal hover:bg-sand/30 rounded-full"
 					aria-label="Reduser antall"
 				>
 					-
@@ -208,7 +208,7 @@
 				<button
 					type="button"
 					onclick={() => newItemQuantity++}
-					class="w-8 h-8 flex items-center justify-center text-charcoal hover:bg-sand/20 rounded-full"
+					class="w-8 h-8 flex items-center justify-center text-charcoal hover:bg-sand/30 rounded-full"
 					aria-label="Øk antall"
 				>
 					+
@@ -243,7 +243,7 @@
 	{:else}
 		<!-- Active items -->
 		<div
-			class="bg-white rounded-lg shadow-sm p-4 mb-6 border border-sand/20"
+			class="bg-white rounded-lg shadow-sm p-4 mb-6 border border-sand/30"
 			transition:fly={{ y: 20, duration: 300 }}
 		>
 			<div class="flex justify-between items-center mb-3">
@@ -273,11 +273,11 @@
 											class="flex-grow p-2 border border-sand rounded-md focus:outline-none focus:ring-1 focus:ring-asphalt"
 											autofocus
 										/>
-										<div class="flex items-center bg-sand/10 rounded-md px-2">
+										<div class="flex items-center bg-sand/30 rounded-md px-2">
 											<button
 												type="button"
 												onclick={() => (editQuantity = Math.max(1, editQuantity - 1))}
-												class="w-8 h-8 flex items-center justify-center text-charcoal hover:bg-sand/20 rounded-full"
+												class="w-8 h-8 flex items-center justify-center text-charcoal hover:bg-sand/30 rounded-full"
 											>
 												-
 											</button>
@@ -290,7 +290,7 @@
 											<button
 												type="button"
 												onclick={() => editQuantity++}
-												class="w-8 h-8 flex items-center justify-center text-charcoal hover:bg-sand/20 rounded-full"
+												class="w-8 h-8 flex items-center justify-center text-charcoal hover:bg-sand/30 rounded-full"
 											>
 												+
 											</button>
@@ -325,7 +325,7 @@
 							{:else}
 								<!-- View mode -->
 								<div
-									class="flex items-center gap-3 p-3 hover:bg-sand/10 transition-colors rounded-md"
+									class="flex items-center gap-3 p-3 hover:bg-sand/30 transition-colors rounded-md"
 								>
 									<!-- Checkbox -->
 									<button
@@ -356,7 +356,7 @@
 										<div class="flex items-center">
 											<span class="font-medium">{item.title}</span>
 											{#if item.quantity && item.quantity > 1}
-												<span class="ml-2 px-2 py-0.5 bg-sand/20 rounded-full text-sm">
+												<span class="ml-2 px-2 py-0.5 bg-sand/30 rounded-full text-sm">
 													{item.quantity} stk
 												</span>
 											{/if}
@@ -406,7 +406,7 @@
 		<!-- Completed items with accordion -->
 		{#if $completedItems.length > 0}
 			<div
-				class="bg-white rounded-lg shadow-sm p-4 border border-sand/20"
+				class="bg-white rounded-lg shadow-sm p-4 border border-sand/30"
 				transition:fly={{ y: 20, duration: 300, delay: 150 }}
 			>
 				<!-- Accordion header -->
@@ -459,7 +459,7 @@
 					<ul class="space-y-2 mt-4" transition:slide={{ duration: 300 }}>
 						{#each $completedItems as item (item.id)}
 							<li
-								class="flex items-center gap-3 p-4 hover:bg-sand/10 transition-colors rounded-md"
+								class="flex items-center gap-3 p-4 hover:bg-sand/30 transition-colors rounded-md"
 								transition:slide={{ duration: 300 }}
 							>
 								<!-- Checkbox -->
@@ -492,7 +492,7 @@
 										<span class="line-through text-charcoal/60">{item.title}</span>
 										{#if item.quantity && item.quantity > 1}
 											<span
-												class="ml-2 px-2 py-0.5 bg-sand/20 rounded-full text-sm line-through text-charcoal/60"
+												class="ml-2 px-2 py-0.5 bg-sand/30 rounded-full text-sm line-through text-charcoal/60"
 											>
 												{item.quantity} stk
 											</span>
