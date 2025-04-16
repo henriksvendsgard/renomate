@@ -80,7 +80,7 @@
 			</div>
 		{/if}
 
-		<form on:submit|preventDefault={handleRegister} class="space-y-4">
+		<form onsubmit={handleRegister} class="space-y-4">
 			<div>
 				<label for="name" class="block text-sm font-medium text-gray-700 mb-1">Navn</label>
 				<input

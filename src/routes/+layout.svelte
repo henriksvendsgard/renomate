@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import { authStore } from '$lib/stores/authStore';
 	import { onMount } from 'svelte';
-	import { House, Settings, ShoppingCart, User } from '@lucide/svelte';
+	import { House, Settings, ShoppingCart, User, X } from '@lucide/svelte';
 
 	// fonts
 	// Supports weights 300-700
@@ -22,6 +22,8 @@
 	const isProfilePage = $derived($page.url.pathname === '/profile');
 	const isShoppingListPage = $derived($page.url.pathname === '/shopping');
 
+	let isDismissed = $state(false);
+
 	// Check if we should display the nav footer
 	const showNavFooter = $derived(!isLoginPage && !isRegisterPage);
 
@@ -34,17 +36,22 @@
 
 		return unsubscribe;
 	});
-
-	// Log auth state changes for debugging using the $effect rune
-	$effect(() => {
-		console.log(
-			`[Layout] Auth state: isAuthenticated=${$authStore.isAuthenticated}, loading=${$authStore.loading}, forceUpdate=${forceUpdate}`
-		);
-	});
 </script>
 
 <!-- Main Layout -->
 <div class="flex flex-col min-h-screen bg-snow">
+	<!-- Banner -->
+	{#if !isDismissed}
+		<header class="bg-pine z-50 sticky top-2 rounded-md m-2 border-b py-3 px-4">
+			<div class="flex items-center w-fit mx-auto gap-3">
+				<p class="text-sm text-white">Databasen er under utvikling, dette er en testversjon</p>
+				<button class="text-white cursor-pointer" onclick={() => (isDismissed = true)}>
+					<X class="w-4 h-4" />
+				</button>
+			</div>
+		</header>
+	{/if}
+
 	<!-- Content -->
 	<main class="flex-grow">
 		{@render children()}

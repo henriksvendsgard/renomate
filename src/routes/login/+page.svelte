@@ -65,7 +65,7 @@
 			</div>
 		{/if}
 
-		<form on:submit|preventDefault={handleLogin} class="space-y-4">
+		<form onsubmit={handleLogin} class="space-y-4">
 			<div>
 				<label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-post</label>
 				<input

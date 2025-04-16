@@ -200,7 +200,7 @@
 			<p class="text-charcoal/70 mb-4">
 				Installer Oppuss som en app på enheten din for bedre ytelse og offline-tilgang.
 			</p>
-			<button on:click={installPWA} class="btn btn-primary inline-flex items-center gap-2">
+			<button onclick={installPWA} class="btn btn-primary inline-flex items-center gap-2">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					class="h-5 w-5"
@@ -222,7 +222,7 @@
 	<div class="bg-white rounded-lg shadow overflow-hidden">
 		<button
 			class="w-full p-6 text-left flex justify-between items-center focus:outline-none"
-			on:click={toggleAdvanced}
+			onclick={toggleAdvanced}
 			aria-expanded={isAdvancedOpen}
 		>
 			<div>
@@ -252,7 +252,7 @@
 				<div class="space-y-4 mt-4">
 					<div>
 						<button
-							on:click={handleExportData}
+							onclick={handleExportData}
 							class="btn btn-primary inline-flex items-center gap-2"
 						>
 							<svg
@@ -276,7 +276,7 @@
 
 					<div>
 						<button
-							on:click={handleImportClick}
+							onclick={handleImportClick}
 							class="btn btn-primary inline-flex items-center gap-2"
 						>
 							<svg
@@ -299,7 +299,7 @@
 						<input
 							type="file"
 							bind:this={fileInput}
-							on:change={handleFileSelect}
+							onchange={handleFileSelect}
 							accept="application/json"
 							class="hidden"
 						/>
@@ -307,7 +307,7 @@
 
 					<div>
 						<button
-							on:click={handleClearData}
+							onclick={handleClearData}
 							class="btn bg-red-500/10 text-red-600 hover:bg-red-500/20 inline-flex items-center gap-2"
 						>
 							<svg

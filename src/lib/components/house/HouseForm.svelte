@@ -97,7 +97,7 @@
 		{isEdit ? `Rediger ${house.name}` : 'Legg til nytt hus'}
 	</h2>
 
-	<form on:submit|preventDefault={handleSubmit} class="space-y-5">
+	<form onsubmit={handleSubmit} class="space-y-5">
 		<!-- House Photo -->
 		<div>
 			<label class="block text-sm font-medium text-charcoal/80 mb-2"> Husbilde (valgfritt) </label>
@@ -107,7 +107,7 @@
 					<button
 						type="button"
 						class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full"
-						on:click={removePhoto}
+						onclick={removePhoto}
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -152,7 +152,7 @@
 							type="file"
 							class="hidden"
 							accept="image/*"
-							on:change={handleFileSelect}
+							onchange={handleFileSelect}
 							disabled={isUploading}
 						/>
 					</label>
@@ -197,7 +197,7 @@
 			<button
 				type="button"
 				class="btn bg-charcoal/10 text-charcoal hover:bg-charcoal/20"
-				on:click={handleCancel}
+				onclick={handleCancel}
 				disabled={isUploading}
 			>
 				Avbryt

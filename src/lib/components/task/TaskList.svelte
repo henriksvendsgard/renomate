@@ -89,7 +89,7 @@
 		<div class="flex items-center gap-3">
 			<!-- Toggle completed tasks visibility -->
 			<button
-				on:click={toggleShowCompleted}
+				onclick={toggleShowCompleted}
 				class="text-sm text-charcoal/70 hover:text-charcoal flex items-center gap-1.5"
 			>
 				<span
@@ -114,7 +114,7 @@
 			</button>
 
 			<!-- Add task button -->
-			<button on:click={toggleAddTaskForm} class="btn btn-primary text-sm flex items-center gap-1">
+			<button onclick={toggleAddTaskForm} class="btn btn-primary text-sm flex items-center gap-1">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					class="h-4 w-4"
@@ -171,9 +171,9 @@
 				</div>
 
 				<div class="flex space-x-2 pt-1">
-					<button on:click={addTask} class="btn btn-success text-sm"> Legg til oppgave </button>
+					<button onclick={addTask} class="btn btn-success text-sm"> Legg til oppgave </button>
 					<button
-						on:click={toggleAddTaskForm}
+						onclick={toggleAddTaskForm}
 						class="btn bg-charcoal/10 text-charcoal text-sm hover:bg-charcoal/20"
 					>
 						Avbryt
@@ -188,7 +188,7 @@
 		{#if filteredTasks.length === 0}
 			<div class="py-6 text-center text-charcoal/60" transition:fade>
 				<p>Ingen oppgaver funnet</p>
-				<button on:click={toggleAddTaskForm} class="mt-2 text-sm text-asphalt hover:underline">
+				<button onclick={toggleAddTaskForm} class="mt-2 text-sm text-asphalt hover:underline">
 					Legg til din første oppgave
 				</button>
 			</div>

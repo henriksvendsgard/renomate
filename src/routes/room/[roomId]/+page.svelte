@@ -187,13 +187,13 @@
 
 						<div class="flex items-center gap-2">
 							<button
-								on:click={toggleEditMode}
+								onclick={toggleEditMode}
 								class="btn bg-sand/30 text-charcoal hover:bg-sand/40 text-sm"
 							>
 								Rediger rom
 							</button>
 							<button
-								on:click={deleteRoom}
+								onclick={deleteRoom}
 								class="btn bg-red-500/10 text-red-600 hover:bg-red-500/20 text-sm"
 							>
 								Slett
@@ -221,11 +221,11 @@
 
 						<div>
 							<h3 class="text-sm font-medium text-charcoal/70 mb-2">Budsjett</h3>
-							<div class="grid grid-cols-3 gap-2">
-								<div class="p-3 bg-sand/30 rounded">
-									<div class="text-sm text-charcoal/70">Totalt</div>
-									<div class="font-semibold">{formatCurrency(room.budget)}</div>
-								</div>
+							<div class="p-3 bg-sand/30 rounded">
+								<div class="text-sm text-charcoal/70">Totalt</div>
+								<div class="font-semibold">{formatCurrency(room.budget)}</div>
+							</div>
+							<div class="grid grid-cols-2 gap-4 mt-4">
 								<div class="p-3 bg-sand/30 rounded">
 									<div class="text-sm text-charcoal/70">Brukt</div>
 									<div class="font-semibold">{formatCurrency(spent)}</div>
@@ -250,7 +250,7 @@
 					class="px-4 py-2 border-b-2 font-medium text-sm {currentTab === 'tasks'
 						? 'border-asphalt text-asphalt'
 						: 'border-transparent text-charcoal/60 hover:text-charcoal/80 hover:border-sand/50'}"
-					on:click={() => setTab('tasks')}
+					onclick={() => setTab('tasks')}
 				>
 					Oppgaver
 				</button>
@@ -258,7 +258,7 @@
 					class="px-4 py-2 border-b-2 font-medium text-sm {currentTab === 'photos'
 						? 'border-asphalt text-asphalt'
 						: 'border-transparent text-charcoal/60 hover:text-charcoal/80 hover:border-sand/50'}"
-					on:click={() => setTab('photos')}
+					onclick={() => setTab('photos')}
 				>
 					Bilder
 				</button>

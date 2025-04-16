@@ -82,7 +82,7 @@
 		{/if}
 	</div>
 
-	<div class="p-6">
+	<div class="pt-6 px-4 pb-4">
 		<div class="flex justify-between items-start mb-4">
 			<div>
 				<h2 class="text-xl font-semibold text-charcoal">{house.name}</h2>
@@ -107,11 +107,10 @@
 		</div>
 
 		<!-- Budget Overview -->
-		<div class="grid grid-cols-3 gap-3 mt-4">
-			<div class="text-center p-2 bg-sand/30 rounded">
-				<div class="text-sm text-charcoal/70">Budsjett</div>
-				<div class="font-medium">{formatCurrency($houseBudget)}</div>
-			</div>
+		<div class="w-fit font-medium text-sm text-charcoal/70 bg-sand/30 rounded-md p-2">
+			Budsjett: {formatCurrency($houseBudget)}
+		</div>
+		<div class="grid grid-cols-2 gap-3 mt-4">
 			<div class="text-center p-2 bg-sand/30 rounded">
 				<div class="text-sm text-charcoal/70">Brukt</div>
 				<div class="font-medium">{formatCurrency($houseSpent)}</div>

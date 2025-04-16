@@ -131,7 +131,7 @@
 			{/if}
 		</div>
 
-		<div class="p-6">
+		<div class="pt-6 px-4 pb-4">
 			<div class="flex justify-between items-start mb-4">
 				<div>
 					<h2 class="text-xl font-semibold text-charcoal">{room.name}</h2>
@@ -156,11 +156,10 @@
 			</div>
 
 			<!-- Budget Overview -->
-			<div class="grid grid-cols-3 gap-3 mt-4">
-				<div class="text-center p-2 bg-sand/30 rounded">
-					<div class="text-sm text-charcoal/70">Budsjett</div>
-					<div class="font-medium">{formatCurrency(room.budget)}</div>
-				</div>
+			<div class="w-fit font-medium text-sm text-charcoal/70 bg-sand/30 rounded-md p-2">
+				Budsjett: {formatCurrency(room.budget)}
+			</div>
+			<div class="grid grid-cols-2 gap-3 mt-4">
 				<div class="text-center p-2 bg-sand/30 rounded">
 					<div class="text-sm text-charcoal/70">Brukt</div>
 					<div class="font-medium">{formatCurrency(spent)}</div>

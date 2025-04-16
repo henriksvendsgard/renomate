@@ -140,13 +140,13 @@
 
 						<div class="flex items-center gap-2">
 							<button
-								on:click={toggleEditMode}
+								onclick={toggleEditMode}
 								class="btn bg-sand/30 text-charcoal hover:bg-sand/40 text-sm"
 							>
 								Rediger hus
 							</button>
 							<button
-								on:click={deleteHouse}
+								onclick={deleteHouse}
 								class="btn bg-red-500/10 text-red-600 hover:bg-red-500/20 text-sm"
 							>
 								Slett
@@ -174,11 +174,11 @@
 
 						<div>
 							<h3 class="text-sm font-medium text-charcoal/70 mb-2">Budsjett</h3>
-							<div class="grid grid-cols-3 gap-2">
-								<div class="p-3 bg-sand/30 rounded">
-									<div class="text-sm text-charcoal/70">Totalt</div>
-									<div class="font-semibold">{formatCurrency($houseBudget)}</div>
-								</div>
+							<div class="p-3 bg-sand/30 rounded">
+								<div class="text-sm text-charcoal/70">Totalt</div>
+								<div class="font-semibold">{formatCurrency($houseBudget)}</div>
+							</div>
+							<div class="grid grid-cols-2 gap-4 mt-4">
 								<div class="p-3 bg-sand/30 rounded">
 									<div class="text-sm text-charcoal/70">Brukt</div>
 									<div class="font-semibold">{formatCurrency($houseSpent)}</div>
@@ -199,7 +199,7 @@
 		<!-- Rooms Section -->
 		<div class="mb-6 flex justify-between items-center">
 			<h2 class="text-xl font-semibold text-charcoal">Rom</h2>
-			<button on:click={toggleAddRoomForm} class="btn btn-primary">
+			<button onclick={toggleAddRoomForm} class="btn btn-primary">
 				{showAddRoomForm ? 'Avbryt' : 'Legg til rom'}
 			</button>
 		</div>
@@ -218,7 +218,7 @@
 				<p class="text-charcoal/70 mb-6">
 					Start planleggingen av oppussingen ved å legge til ditt første rom.
 				</p>
-				<button on:click={toggleAddRoomForm} class="btn btn-primary">
+				<button onclick={toggleAddRoomForm} class="btn btn-primary">
 					Legg til ditt første rom
 				</button>
 			</div>

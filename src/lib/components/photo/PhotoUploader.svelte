@@ -98,7 +98,7 @@
 
 		<!-- Upload button -->
 		<button
-			on:click={openFileInput}
+			onclick={openFileInput}
 			disabled={isUploading}
 			class="btn btn-primary text-sm flex items-center gap-1"
 		>
@@ -121,7 +121,7 @@
 		<input
 			type="file"
 			bind:this={fileInput}
-			on:change={handleFileSelect}
+			onchange={handleFileSelect}
 			accept="image/*"
 			multiple
 			class="hidden"
@@ -148,7 +148,7 @@
 		{#if !photos || photos.length === 0}
 			<div class="text-center py-8 text-charcoal/70">
 				<p>Ingen bilder lagt til ennå</p>
-				<button on:click={openFileInput} class="mt-2 text-sm text-asphalt hover:underline">
+				<button onclick={openFileInput} class="mt-2 text-sm text-asphalt hover:underline">
 					Legg til ditt første bilde
 				</button>
 			</div>
@@ -156,15 +156,21 @@
 			<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
 				{#each photos as photo, index}
 					<div class="relative aspect-square group">
-						<img
-							src={photo}
-							alt="Rombilde {index + 1}"
-							class="w-full h-full object-cover rounded-lg cursor-pointer"
-							on:click={() => selectPhoto(index)}
-						/>
+						<button
+							tabindex="0"
+							aria-label="Vis bilde"
+							onclick={() => selectPhoto(index)}
+							onkeydown={(e) => e.key === 'Enter' && selectPhoto(index)}
+						>
+							<img
+								src={photo}
+								alt="Rombilde {index + 1}"
+								class="w-full h-full object-cover rounded-lg cursor-pointer"
+							/>
+						</button>
 						<button
 							class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full"
-							on:click|stopPropagation={() => deletePhoto(index)}
+							onclick={() => deletePhoto(index)}
 							aria-label="Slett bilde"
 						>
 							<svg
@@ -190,13 +196,20 @@
 	{#if selectedIndex >= 0 && selectedIndex < photos.length}
 		<div
 			class="fixed inset-0 bg-charcoal/80 flex items-center justify-center z-50 p-4"
-			on:click={closeModal}
-			on:keydown={(e) => e.key === 'Escape' && closeModal()}
+			onclick={closeModal}
+			onkeydown={(e) => e.key === 'Escape' && closeModal()}
 			role="dialog"
 			aria-label="Bildevisning"
 			tabindex="-1"
 		>
-			<div class="max-w-5xl max-h-[90vh] relative" on:click|stopPropagation>
+			<div
+				class="max-w-5xl max-h-[90vh] relative"
+				role="button"
+				tabindex="0"
+				aria-label="Lukk bilde"
+				onclick={closeModal}
+				onkeydown={(e) => e.key === 'Escape' && closeModal()}
+			>
 				<div class="bg-snow rounded-lg shadow-lg">
 					<img
 						src={photos[selectedIndex]}
@@ -207,7 +220,7 @@
 				</div>
 
 				<button
-					on:click={closeModal}
+					onclick={closeModal}
 					class="absolute top-2 right-2 bg-white/80 text-charcoal p-1.5 rounded-full hover:bg-white"
 					aria-label="Lukk bilde"
 				>
