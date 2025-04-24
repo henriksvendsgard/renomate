@@ -1,6 +1,6 @@
-# 🛠️ Oppuss – Room-by-Room Renovation Planner (PWA)
+# 🛠️ Renomate – Room-by-Room Renovation Planner (PWA)
 
-**Oppuss** is a minimalist and collaborative renovation planning app designed for couples or homeowners. Built as a Progressive Web App (PWA), it works offline and syncs your renovation tasks, budgets, and progress room by room.
+**Renomate** is a minimalist and collaborative renovation planning app designed for couples or homeowners. Built as a Progressive Web App (PWA), it works offline and syncs your renovation tasks, budgets, and progress room by room.
 
 ![Oppuss Logo](static/favicon.png)
 
@@ -53,9 +53,10 @@ The built application will be in the `build` directory.
 
 ## Tech Stack
 
-- **Framework**: [SvelteKit](https://kit.svelte.dev/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Framework**: [SvelteKit 4](https://kit.svelte.dev/)
+- **Styling**: [Tailwind v4](https://tailwindcss.com/)
 - **Storage**: IndexedDB via [Dexie.js](https://dexie.org/)
+- **Authentication**: [Supabase](https://supabase.com)
 - **PWA**: [@vite-pwa/sveltekit](https://vite-pwa-org.netlify.app/frameworks/sveltekit.html)
 
 ## Project Structure
