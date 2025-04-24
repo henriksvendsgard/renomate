@@ -47,8 +47,8 @@ export type ShoppingItem = {
 export type User = {
     id: string;
     email: string;
-    password: string; // This will store a hashed password, not plaintext
     name: string;
+    avatar?: string;  // URL to user's profile image
     createdAt?: string;
     updatedAt?: string;
 }; 
