@@ -22,7 +22,8 @@
 	const isProfilePage = $derived($page.url.pathname === '/profile');
 	const isShoppingListPage = $derived($page.url.pathname === '/shopping');
 
-	let isDismissed = $state(false);
+	// Banner dismiss state
+	let isBannerDismissed = $state(false);
 
 	// Check if we should display the nav footer
 	const showNavFooter = $derived(!isLoginPage && !isRegisterPage);
@@ -41,16 +42,16 @@
 <!-- Main Layout -->
 <div class="flex flex-col min-h-screen bg-snow">
 	<!-- Banner -->
-	{#if !isDismissed}
+	<!-- {#if !isBannerDismissed}
 		<header class="bg-pine z-50 sticky top-2 rounded-md m-2 border-b py-3 px-4">
 			<div class="flex items-center w-fit mx-auto gap-3">
 				<p class="text-sm text-white">Databasen er under utvikling, dette er en testversjon</p>
-				<button class="text-white cursor-pointer" onclick={() => (isDismissed = true)}>
+				<button class="text-white cursor-pointer" onclick={() => (isBannerDismissed = true)}>
 					<X class="w-4 h-4" />
 				</button>
 			</div>
 		</header>
-	{/if}
+	{/if} -->
 
 	<!-- Content -->
 	<main class="flex-grow">
