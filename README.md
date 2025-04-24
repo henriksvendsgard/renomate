@@ -111,6 +111,49 @@ oppuss/
 - Push notifications for reminders
 - Before/after photo comparison
 
+## Supabase Setup
+
+The app uses Supabase for authentication and database. Follow these steps to set up Supabase:
+
+1. **Create a Supabase Project**:
+   - Sign up at [Supabase](https://supabase.com/) and create a new project
+   - Go to Project Settings > API to get your API credentials
+   - Copy the URL and anon key to your `.env` file (see `.env.example`)
+
+2. **Run Database Migrations**:
+   - The SQL migration files are in the `supabase/migrations` directory
+   - You can run them manually in the Supabase SQL Editor, or
+   - Use the [Supabase CLI](https://supabase.com/docs/reference/cli) to apply migrations:
+     ```bash
+     supabase link --project-ref your-project-id
+     supabase db push
+     ```
+
+3. **Configure Authentication**:
+   - Go to Authentication > Settings in your Supabase dashboard
+   - Set the Site URL to your app's URL (e.g. `http://localhost:5173` for local development)
+   - Enable Email/Password provider if not already enabled
+
+4. **Set Up Row Level Security (RLS)**:
+   - The migrations include RLS policies for all tables
+   - These policies ensure users can only access their own data
+   - You can verify them in Database > Tables > (select table) > Policies
+
+5. **Restart Your App**:
+   ```bash
+   npm run dev
+   ```
+
+## Database Schema
+
+The app uses the following database tables:
+
+- **houses**: Stores information about houses
+- **rooms**: Stores information about rooms in houses
+- **shopping_items**: Stores shopping list items
+
+See the migration files in `supabase/migrations` for the complete schema.
+
 ---
 
 Made with ❤️ by two people renovating their first home together.
