@@ -46,6 +46,66 @@ function mapToDbShoppingItem(item: Partial<ShoppingItem>): Record<string, any> {
   return dbItem;
 }
 
+// Mapper functions for House objects
+function mapToHouse(dbItem: any): House {
+  return {
+    id: dbItem.id,
+    userId: dbItem.user_id,
+    name: dbItem.name,
+    address: dbItem.address,
+    photo: dbItem.photo,
+    createdAt: dbItem.created_at,
+    updatedAt: dbItem.updated_at
+  };
+}
+
+function mapToDbHouse(item: Partial<House>): Record<string, any> {
+  const dbItem: Record<string, any> = {};
+  
+  if (item.id !== undefined) dbItem.id = item.id;
+  if (item.userId !== undefined) dbItem.user_id = item.userId;
+  if (item.name !== undefined) dbItem.name = item.name;
+  if (item.address !== undefined) dbItem.address = item.address;
+  if (item.photo !== undefined) dbItem.photo = item.photo;
+  if (item.createdAt !== undefined) dbItem.created_at = item.createdAt;
+  if (item.updatedAt !== undefined) dbItem.updated_at = item.updatedAt;
+  
+  return dbItem;
+}
+
+// Mapper functions for Room objects
+function mapToRoom(dbItem: any): Room {
+  return {
+    id: dbItem.id,
+    houseId: dbItem.house_id,
+    name: dbItem.name,
+    budget: dbItem.budget,
+    deadline: dbItem.deadline,
+    thumbnail: dbItem.thumbnail,
+    photos: dbItem.photos || [],
+    tasks: dbItem.tasks || [],
+    createdAt: dbItem.created_at,
+    updatedAt: dbItem.updated_at
+  };
+}
+
+function mapToDbRoom(item: Partial<Room>): Record<string, any> {
+  const dbItem: Record<string, any> = {};
+  
+  if (item.id !== undefined) dbItem.id = item.id;
+  if (item.houseId !== undefined) dbItem.house_id = item.houseId;
+  if (item.name !== undefined) dbItem.name = item.name;
+  if (item.budget !== undefined) dbItem.budget = item.budget;
+  if (item.deadline !== undefined) dbItem.deadline = item.deadline;
+  if (item.thumbnail !== undefined) dbItem.thumbnail = item.thumbnail;
+  if (item.photos !== undefined) dbItem.photos = item.photos;
+  if (item.tasks !== undefined) dbItem.tasks = item.tasks;
+  if (item.createdAt !== undefined) dbItem.created_at = item.createdAt;
+  if (item.updatedAt !== undefined) dbItem.updated_at = item.updatedAt;
+  
+  return dbItem;
+}
+
 // House operations
 export const houseService = {
   async getAll(): Promise<House[]> {
@@ -57,8 +117,8 @@ export const houseService = {
       const { data, error } = await supabase
         .from('houses')
         .select('*')
-        .eq('userId', userId)
-        .order('createdAt', { ascending: false });
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
       
       if (error) {
         console.error('DB error getting houses:', error);
@@ -66,7 +126,7 @@ export const houseService = {
       }
       
       console.log('DB: Retrieved houses:', data);
-      return data as House[];
+      return data.map(mapToHouse);
     } catch (err) {
       console.error('Error fetching houses:', err);
       return [];
@@ -80,8 +140,8 @@ export const houseService = {
       const { data, error } = await supabase
         .from('houses')
         .select('*')
-        .eq('userId', userId)
-        .order('createdAt', { ascending: false });
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
       
       if (error) {
         console.error('DB error getting houses for user:', error);
@@ -89,7 +149,7 @@ export const houseService = {
       }
       
       console.log('DB: Retrieved houses for user:', data);
-      return data as House[];
+      return data.map(mapToHouse);
     } catch (err) {
       console.error('Error fetching houses for user:', err);
       return [];
@@ -109,7 +169,7 @@ export const houseService = {
         return undefined;
       }
       
-      return data as House;
+      return mapToHouse(data);
     } catch (err) {
       console.error('Error fetching house:', err);
       return undefined;
@@ -122,7 +182,7 @@ export const houseService = {
       const userId = getCurrentUserId();
       
       // Create a new house with the current user ID
-      const newHouse: House = {
+      const newHouse = {
         ...house,
         id: crypto.randomUUID(),
         userId,
@@ -130,9 +190,11 @@ export const houseService = {
         updatedAt: now
       };
       
+      const dbHouse = mapToDbHouse(newHouse);
+      
       const { data, error } = await supabase
         .from('houses')
-        .insert(newHouse)
+        .insert(dbHouse)
         .select()
         .single();
       
@@ -151,10 +213,12 @@ export const houseService = {
   async update(id: string, updates: Partial<Omit<House, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void> {
     try {
       const now = new Date().toISOString();
+      const updatesWithTimestamp = { ...updates, updatedAt: now };
+      const dbUpdates = mapToDbHouse(updatesWithTimestamp);
       
       const { error } = await supabase
         .from('houses')
-        .update({ ...updates, updatedAt: now })
+        .update(dbUpdates)
         .eq('id', id);
       
       if (error) {
@@ -214,14 +278,14 @@ export const roomService = {
       const { data, error } = await supabase
         .from('rooms')
         .select('*')
-        .order('createdAt', { ascending: false });
+        .order('created_at', { ascending: false });
       
       if (error) {
         console.error('DB error getting all rooms:', error);
         return [];
       }
       
-      return data as Room[];
+      return data.map(mapToRoom);
     } catch (err) {
       console.error('Error fetching all rooms:', err);
       return [];
@@ -233,15 +297,15 @@ export const roomService = {
       const { data, error } = await supabase
         .from('rooms')
         .select('*')
-        .eq('houseId', houseId)
-        .order('createdAt', { ascending: false });
+        .eq('house_id', houseId)
+        .order('created_at', { ascending: false });
       
       if (error) {
         console.error('DB error getting rooms for house:', error);
         return [];
       }
       
-      return data as Room[];
+      return data.map(mapToRoom);
     } catch (err) {
       console.error('Error fetching rooms for house:', err);
       return [];
@@ -261,7 +325,7 @@ export const roomService = {
         return undefined;
       }
       
-      return data as Room;
+      return mapToRoom(data);
     } catch (err) {
       console.error('Error fetching room:', err);
       return undefined;
@@ -272,7 +336,7 @@ export const roomService = {
     try {
       const now = new Date().toISOString();
       
-      const newRoom: Room = {
+      const newRoom = {
         ...room,
         id: crypto.randomUUID(),
         createdAt: now,
@@ -280,9 +344,11 @@ export const roomService = {
         tasks: room.tasks || []
       };
       
+      const dbRoom = mapToDbRoom(newRoom);
+      
       const { data, error } = await supabase
         .from('rooms')
-        .insert(newRoom)
+        .insert(dbRoom)
         .select()
         .single();
       
@@ -324,10 +390,13 @@ export const roomService = {
         }
       }
       
+      const updatesWithTimestamp = { ...updates, updatedAt: now };
+      const dbUpdates = mapToDbRoom(updatesWithTimestamp);
+      
       // Perform the update
       const { error } = await supabase
         .from('rooms')
-        .update({ ...updates, updatedAt: now })
+        .update(dbUpdates)
         .eq('id', id);
       
       if (error) {
