@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { userService } from '$lib/services/db';
 	import { authStore } from '$lib/stores/authStore';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { browser } from '$app/environment';
 
 	let email = '';
 	let password = '';
@@ -28,21 +26,13 @@
 		loading = true;
 
 		try {
-			const user = await userService.login(email, password);
+			const response = await authStore.login(email, password);
 
-			if (user) {
-				// First store in localStorage directly
-				if (browser) {
-					localStorage.setItem('auth_user', JSON.stringify(user));
-				}
-
-				// Then update the store
-				authStore.login(user);
-
-				// Directly navigate to home page
-				window.location.href = '/';
+			if (response.error) {
+				error = response.error.message || 'Ugyldig e-post eller passord';
 			} else {
-				error = 'Ugyldig e-post eller passord';
+				// Successfully logged in, navigate to home page
+				goto('/', { replaceState: true });
 			}
 		} catch (err) {
 			console.error('Login error:', err);
@@ -53,11 +43,11 @@
 	}
 </script>
 
-<div class="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+<div class="flex flex-col items-center justify-center min-h-screen bg-snow p-4">
 	<div class="w-full max-w-md bg-white rounded-lg shadow-md p-6">
 		<img src="/renomate-logo.png" alt="renomate logo" class="w-20 h-20 mx-auto" />
 		<h1 class="text-2xl font-bold text-center mb-4 font-comfortaa">renomate</h1>
-		<p class="text-gray-600 text-center mb-6">Logg inn for å fortsette</p>
+		<p class="text-charcoal/70 text-center mb-6">Logg inn for å fortsette</p>
 
 		{#if error}
 			<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -65,35 +55,38 @@
 			</div>
 		{/if}
 
-		<form onsubmit={handleLogin} class="space-y-4">
+		<form on:submit|preventDefault={handleLogin} class="space-y-4">
 			<div>
-				<label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-post</label>
+				<label for="email" class="block text-sm font-medium text-charcoal mb-1">E-post</label>
 				<input
 					type="email"
 					id="email"
 					bind:value={email}
-					class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+					class="w-full px-3 py-2 border border-sand rounded-md shadow-sm focus:outline-none focus:ring-pine focus:border-pine"
 					placeholder="din@epost.no"
 					required
 				/>
 			</div>
 
 			<div>
-				<label for="password" class="block text-sm font-medium text-gray-700 mb-1"> Passord </label>
+				<label for="password" class="block text-sm font-medium text-charcoal mb-1"> Passord </label>
 				<input
 					type="password"
 					id="password"
 					bind:value={password}
-					class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+					class="w-full px-3 py-2 border border-sand rounded-md shadow-sm focus:outline-none focus:ring-pine focus:border-pine"
 					placeholder="Ditt passord"
 					required
 				/>
+				<div class="text-right mt-1">
+					<a href="/forgot-password" class="text-sm text-pine hover:text-pine/90">Glemt passord?</a>
+				</div>
 			</div>
 
 			<div class="flex justify-center py-4">
 				<button
 					type="submit"
-					class="w-full flex justify-center py-2 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-pine hover:bg-pine-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pine-dark"
+					class="w-full flex justify-center py-2 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-pine hover:bg-pine/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pine"
 					disabled={loading}
 				>
 					{loading ? 'Logger inn...' : 'Logg inn'}
@@ -101,10 +94,9 @@
 			</div>
 
 			<div class="text-center mt-4">
-				<p class="text-sm text-gray-600">
+				<p class="text-sm text-charcoal/70">
 					Har du ikke en konto?
-					<a href="/register" class="font-medium text-blue-600 hover:text-blue-500">Registrer deg</a
-					>
+					<a href="/register" class="font-medium text-pine hover:text-pine/90">Registrer deg</a>
 				</p>
 			</div>
 		</form>

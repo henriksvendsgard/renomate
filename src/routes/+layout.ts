@@ -5,7 +5,7 @@ import { get } from 'svelte/store';
 import type { LayoutLoad } from './$types';
 
 // Public routes that don't require authentication
-const publicRoutes = ['/login', '/register'];
+const publicRoutes = ['/login', '/register', '/forgot-password'];
 
 // Helper to check if we're on a public route
 const isPublicRoute = (path: string) => {
