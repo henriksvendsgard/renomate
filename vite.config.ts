@@ -11,11 +11,11 @@ export default defineConfig({
 		SvelteKitPWA({
 			registerType: 'autoUpdate',
 			manifest: {
-				name: 'Oppuss',
-				short_name: 'Oppuss',
-				description: 'Room-by-Room Renovation Planner',
-				theme_color: '#D8CAB8',
-				background_color: '#FDFCF9',
+				name: 'Renomate',
+				short_name: 'Renomate',
+				description: 'Your renovation mate',
+				theme_color: '#006600',
+				background_color: '#F9F9F9',
 				icons: [
 					{
 						src: 'pwa-192x192.png',
@@ -32,6 +32,16 @@ export default defineConfig({
 						sizes: '512x512',
 						type: 'image/png',
 						purpose: 'maskable'
+					},
+					{
+						src: 'renomate-logo.png',
+						sizes: '333x333',
+						type: 'image/png'
+					},
+					{
+						src: 'favicon.png',
+						sizes: '333x333',
+						type: 'image/png'
 					}
 				],
 				display: 'standalone',
