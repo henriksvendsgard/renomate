@@ -219,7 +219,7 @@
 	{/if}
 
 	<!-- Advanced Settings Accordion -->
-	<div class="bg-white rounded-lg shadow overflow-hidden">
+	<!-- <div class="bg-white rounded-lg shadow overflow-hidden">
 		<button
 			class="w-full p-6 text-left flex justify-between items-center focus:outline-none"
 			onclick={toggleAdvanced}
@@ -331,7 +331,7 @@
 				</div>
 			</div>
 		{/if}
-	</div>
+	</div> -->
 
 	<!-- User Messages -->
 	{#if message.text}
