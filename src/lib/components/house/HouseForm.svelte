@@ -26,8 +26,8 @@
 		isUploading = true;
 
 		try {
-			// Process the first image only
-			const photos = await processImages(fileInput.files);
+			// Process the first image only with high quality
+			const photos = await processImages(fileInput.files, 'HIGH');
 			if (photos.length > 0) {
 				photo = photos[0];
 			}

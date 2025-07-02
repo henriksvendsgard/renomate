@@ -252,7 +252,7 @@
 						: 'border-transparent text-charcoal/60 hover:text-charcoal/80 hover:border-sand/50'}"
 					onclick={() => setTab('tasks')}
 				>
-					Oppgaver
+					Oppgaver <span class="text-sm text-charcoal/50">({roomTasks.length})</span>
 				</button>
 				<button
 					class="px-4 py-2 border-b-2 font-medium text-sm {currentTab === 'photos'
@@ -260,7 +260,7 @@
 						: 'border-transparent text-charcoal/60 hover:text-charcoal/80 hover:border-sand/50'}"
 					onclick={() => setTab('photos')}
 				>
-					Bilder
+					Bilder <span class="text-sm text-charcoal/50">({roomPhotos.length})</span>
 				</button>
 			</div>
 		</div>
