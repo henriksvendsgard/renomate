@@ -84,13 +84,11 @@
 <div>
 	<!-- Task list header and controls -->
 	<div class="flex justify-between items-center mb-4">
-		<h3 class="text-lg font-medium text-charcoal">Oppgaver</h3>
-
-		<div class="flex items-center gap-3">
-			<!-- Toggle completed tasks visibility -->
+		<div class="">
+			<h3 class="text-lg font-medium text-charcoal">Oppgaver</h3>
 			<button
 				onclick={toggleShowCompleted}
-				class="text-sm text-charcoal/70 hover:text-charcoal flex items-center gap-1.5"
+				class="text-sm text-charcoal/70 hover:text-charcoal flex items-center gap-1.5 mt-2"
 			>
 				<span
 					class="w-4 h-4 border border-charcoal/30 rounded inline-flex items-center justify-center"
@@ -110,8 +108,12 @@
 						</svg>
 					{/if}
 				</span>
-				Vis fullførte
+				Vis fullførte ({currentTasks.filter((task) => task.done).length})
 			</button>
+		</div>
+
+		<div class="flex items-center gap-3">
+			<!-- Toggle completed tasks visibility -->
 
 			<!-- Add task button -->
 			<button onclick={toggleAddTaskForm} class="btn btn-primary text-sm flex items-center gap-1">

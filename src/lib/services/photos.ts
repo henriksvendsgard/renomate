@@ -2,6 +2,13 @@
  * Service for handling photo uploads, conversions to base64, etc.
  */
 
+// Quality settings for different use cases
+export const QUALITY_SETTINGS = {
+  HIGH: { maxWidth: 2560, maxHeight: 2560, quality: 0.95, maxFileSize: 15 * 1024 * 1024 },
+  MEDIUM: { maxWidth: 1500, maxHeight: 1500, quality: 0.9, maxFileSize: 10 * 1024 * 1024 },
+  LOW: { maxWidth: 1000, maxHeight: 1000, quality: 0.8, maxFileSize: 5 * 1024 * 1024 }
+} as const;
+
 // Check if a file is a valid image 
 export function isValidImageFile(file: File): boolean {
   // Valid image MIME types
@@ -26,7 +33,7 @@ export async function fileToBase64(file: File): Promise<string> {
     const timeout = setTimeout(() => {
       console.warn('FileReader timed out');
       reject(new Error('File reading timed out'));
-    }, 10000);
+    }, 15000); // Increased timeout for larger files
     
     reader.onload = () => {
       clearTimeout(timeout);
@@ -62,7 +69,12 @@ export async function processImageDirect(file: File): Promise<string | null> {
 }
 
 // Resize an image to a maximum width/height while maintaining aspect ratio
-export async function resizeImage(file: File, maxWidth = 1000, maxHeight = 1000): Promise<File | null> {
+export async function resizeImage(
+  file: File, 
+  maxWidth = 1500, 
+  maxHeight = 1500, 
+  quality = 0.9
+): Promise<File | null> {
   console.log('Resizing image:', file.name, 'current size:', Math.round(file.size / 1024), 'KB');
   
   return new Promise((resolve) => {
@@ -70,20 +82,20 @@ export async function resizeImage(file: File, maxWidth = 1000, maxHeight = 1000)
       const img = new Image();
       const url = URL.createObjectURL(file);
       
-      // Set timeout to prevent hanging - reduced from 10s to 5s
+      // Set timeout to prevent hanging - increased for larger images
       const timeout = setTimeout(() => {
         console.warn('Image resize timed out');
         URL.revokeObjectURL(url);
         resolve(null);
-      }, 5000);
+      }, 10000); // Increased timeout for better quality processing
       
       img.onload = () => {
         clearTimeout(timeout);
         URL.revokeObjectURL(url);
         
         try {
-          // Check if resizing is needed - more aggressive size check
-          if (img.width <= maxWidth && img.height <= maxHeight && file.size < 500 * 1024) {
+          // Check if resizing is needed - less aggressive size check for higher quality
+          if (img.width <= maxWidth && img.height <= maxHeight && file.size < 2 * 1024 * 1024) {
             console.log('Image is already small enough, skipping resize');
             resolve(file);
             return;
@@ -114,6 +126,7 @@ export async function resizeImage(file: File, maxWidth = 1000, maxHeight = 1000)
           }
           
           // Use better quality settings for drawing
+          ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = 'high';
           ctx.drawImage(img, 0, 0, width, height);
           
@@ -138,7 +151,7 @@ export async function resizeImage(file: File, maxWidth = 1000, maxHeight = 1000)
               resolve(resizedFile);
             },
             file.type,
-            0.8 // Quality parameter - slightly reduced from 0.85 for better compression
+            quality // Use configurable quality parameter
           );
         } catch (error) {
           console.error('Error in resize processing:', error);
@@ -162,8 +175,12 @@ export async function resizeImage(file: File, maxWidth = 1000, maxHeight = 1000)
 }
 
 // Process multiple image files for upload - resize and convert to base64
-export async function processImages(files: FileList): Promise<string[]> {
-  console.log('Processing', files.length, 'images');
+export async function processImages(
+  files: FileList, 
+  quality = 'HIGH' as keyof typeof QUALITY_SETTINGS
+): Promise<string[]> {
+  console.log('Processing', files.length, 'images with quality:', quality);
+  const settings = QUALITY_SETTINGS[quality];
   const processedImages: string[] = [];
   
   // Limit to 10 files at a time to prevent browser hanging
@@ -182,15 +199,15 @@ export async function processImages(files: FileList): Promise<string[]> {
       continue;
     }
     
-    // Validate file size - skip files larger than 10MB (reduced from 15MB)
-    if (file.size > 10 * 1024 * 1024) {
+    // Validate file size based on quality setting
+    if (file.size > settings.maxFileSize) {
       console.warn(`Skipping large file: ${file.name} (${Math.round(file.size / 1024 / 1024)}MB)`);
       continue;
     }
     
     try {
-      // First try to resize the image - use smaller dimensions (1000px instead of 1200px)
-      const resizedFile = await resizeImage(file, 1000, 1000);
+      // First try to resize the image with quality settings
+      const resizedFile = await resizeImage(file, settings.maxWidth, settings.maxHeight, settings.quality);
       
       if (resizedFile) {
         // Convert resized image to base64
@@ -204,8 +221,8 @@ export async function processImages(files: FileList): Promise<string[]> {
         }
       }
       
-      // If resize failed, try direct conversion as fallback (but only for smaller files < 3MB)
-      if (file.size < 3 * 1024 * 1024) {
+      // If resize failed, try direct conversion as fallback (but only for smaller files)
+      if (file.size < settings.maxFileSize / 2) {
         console.log('Resize failed, trying direct conversion for small file');
         const directBase64 = await processImageDirect(file);
         
@@ -225,6 +242,60 @@ export async function processImages(files: FileList): Promise<string[]> {
   
   console.log('Processed', processedImages.length, 'of', maxFilesToProcess, 'images');
   return processedImages;
+}
+
+// Download a base64 image as a file
+export function downloadImage(base64Image: string, filename = 'image.jpg'): void {
+  try {
+    // Create a temporary link element
+    const link = document.createElement('a');
+    link.href = base64Image;
+    link.download = filename;
+    
+    // Append to body, click, and remove
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    console.log('Image download initiated:', filename);
+  } catch (error) {
+    console.error('Error downloading image:', error);
+  }
+}
+
+// Get file extension from MIME type
+export function getFileExtension(mimeType: string): string {
+  const extensions: Record<string, string> = {
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/gif': 'gif',
+    'image/webp': 'webp',
+    'image/bmp': 'bmp',
+    'image/svg+xml': 'svg'
+  };
+  return extensions[mimeType] || 'jpg';
+}
+
+// Generate filename from base64 image
+export function generateFilename(base64Image: string, originalName?: string): string {
+  try {
+    // Extract MIME type from base64
+    const mimeType = base64Image.split(';')[0].split(':')[1];
+    const extension = getFileExtension(mimeType);
+    
+    if (originalName) {
+      // Use original name but change extension if needed
+      const nameWithoutExt = originalName.replace(/\.[^/.]+$/, '');
+      return `${nameWithoutExt}.${extension}`;
+    }
+    
+    // Generate timestamp-based filename
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+    return `image-${timestamp}.${extension}`;
+  } catch (error) {
+    console.error('Error generating filename:', error);
+    return `image-${Date.now()}.jpg`;
+  }
 }
 
 // Simple cache for thumbnails to prevent regenerating the same ones
@@ -294,6 +365,7 @@ export function getThumbnail(base64Image: string, size = 500, key = ''): Promise
           canvas.height = height;
           
           // Use better quality rendering
+          ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = 'high';
           ctx.drawImage(img, 0, 0, width, height);
           const thumbnailData = canvas.toDataURL('image/jpeg', 0.9); // Higher quality - 0.9 instead of 0.7

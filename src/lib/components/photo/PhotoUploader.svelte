@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { processImages } from '$lib/services/photos';
+	import { processImages, downloadImage, generateFilename } from '$lib/services/photos';
 	import { rooms } from '$lib/stores/rooms';
+	import { Trash, Trash2 } from '@lucide/svelte';
 
 	export let roomId: string;
 	export let photos: string[] = [];
@@ -36,8 +37,8 @@
 				uploadProgress = Math.min(95, uploadProgress + 5);
 			}, 100);
 
-			// Process images
-			const newPhotos = await processImages(fileInput.files);
+			// Process images with high quality
+			const newPhotos = await processImages(fileInput.files, 'HIGH');
 
 			if (newPhotos.length === 0) {
 				throw new Error('Ingen bilder ble behandlet');
@@ -79,6 +80,12 @@
 				photos: updatedPhotos
 			});
 		}
+	}
+
+	// Download photo
+	function downloadPhoto(photo: string, index: number) {
+		const filename = generateFilename(photo, `rom-bilde-${index + 1}`);
+		downloadImage(photo, filename);
 	}
 
 	// Show fullsize photo in modal
@@ -153,39 +160,37 @@
 				</button>
 			</div>
 		{:else}
-			<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 				{#each photos as photo, index}
-					<div class="relative aspect-square group">
+					<div
+						class="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+					>
 						<button
 							tabindex="0"
 							aria-label="Vis bilde"
 							onclick={() => selectPhoto(index)}
 							onkeydown={(e) => e.key === 'Enter' && selectPhoto(index)}
+							class="w-full h-full block"
 						>
 							<img
 								src={photo}
 								alt="Rombilde {index + 1}"
-								class="w-full h-full object-cover rounded-lg cursor-pointer"
+								class="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
+								loading="lazy"
 							/>
 						</button>
-						<button
-							class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full"
-							onclick={() => deletePhoto(index)}
-							aria-label="Slett bilde"
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								class="h-4 w-4"
-								viewBox="0 0 20 20"
-								fill="currentColor"
+
+						<!-- Action buttons overlay -->
+						<div class="absolute top-2 right-2 flex gap-1">
+							<button
+								class="p-2 bg-red-600/80 text-white rounded-full hover:bg-red-600"
+								onclick={() => deletePhoto(index)}
+								aria-label="Slett bilde"
+								title="Slett bilde"
 							>
-								<path
-									fill-rule="evenodd"
-									d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-									clip-rule="evenodd"
-								/>
-							</svg>
-						</button>
+								<Trash2 class="w-4 h-4" />
+							</button>
+						</div>
 					</div>
 				{/each}
 			</div>
@@ -219,24 +224,46 @@
 					/>
 				</div>
 
-				<button
-					onclick={closeModal}
-					class="absolute top-2 right-2 bg-white/80 text-charcoal p-1.5 rounded-full hover:bg-white"
-					aria-label="Lukk bilde"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-5 w-5"
-						viewBox="0 0 20 20"
-						fill="currentColor"
+				<!-- Modal action buttons -->
+				<div class="absolute top-2 right-2 flex gap-2">
+					<button
+						onclick={() => downloadPhoto(photos[selectedIndex], selectedIndex)}
+						class="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600"
+						aria-label="Last ned bilde"
+						title="Last ned bilde"
 					>
-						<path
-							fill-rule="evenodd"
-							d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-							clip-rule="evenodd"
-						/>
-					</svg>
-				</button>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-5 w-5"
+							viewBox="0 0 20 20"
+							fill="currentColor"
+						>
+							<path
+								fill-rule="evenodd"
+								d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+								clip-rule="evenodd"
+							/>
+						</svg>
+					</button>
+					<button
+						onclick={closeModal}
+						class="bg-white/80 text-charcoal p-2 rounded-full hover:bg-white"
+						aria-label="Lukk bilde"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-5 w-5"
+							viewBox="0 0 20 20"
+							fill="currentColor"
+						>
+							<path
+								fill-rule="evenodd"
+								d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+								clip-rule="evenodd"
+							/>
+						</svg>
+					</button>
+				</div>
 			</div>
 		</div>
 	{/if}
