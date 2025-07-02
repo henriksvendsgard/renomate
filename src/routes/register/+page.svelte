@@ -3,17 +3,19 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
-	let name = '';
-	let email = '';
-	let password = '';
-	let confirmPassword = '';
-	let error = '';
-	let loading = false;
+	let name = $state('');
+	let email = $state('');
+	let password = $state('');
+	let confirmPassword = $state('');
+	let error = $state('');
+	let loading = $state(false);
+
+	let showVerificationMessage = $state(true);
 
 	// If already logged in, redirect to home
 	onMount(() => {
 		if ($authStore.isAuthenticated && !$authStore.loading) {
-			goto('/');
+			goto('/', { replaceState: true });
 		}
 	});
 
@@ -45,13 +47,7 @@
 				error = response.error.message || 'Det oppstod en feil under registreringen';
 			} else {
 				// Successfully created an account, navigate to home or verification page
-				if (response.data.session) {
-					// User is already signed in, go to home
-					goto('/', { replaceState: true });
-				} else {
-					// Email verification might be required
-					goto('/verify-email', { replaceState: true });
-				}
+				showVerificationMessage = true;
 			}
 		} catch (err: any) {
 			console.error('Registration error:', err);
@@ -74,7 +70,16 @@
 			</div>
 		{/if}
 
-		<form on:submit|preventDefault={handleRegister} class="space-y-4">
+		{#if showVerificationMessage}
+			<div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4">
+				<p class="mb-2">Vennligst sjekk din e-post for å verifisere kontoen din.</p>
+				<a href="/login" class="text-blue-800 hover:text-blue-900 underline"
+					>Gå til innloggingssiden</a
+				>
+			</div>
+		{/if}
+
+		<form onsubmit={handleRegister} class="space-y-4">
 			<div>
 				<label for="name" class="block text-sm font-medium text-charcoal mb-1">Navn</label>
 				<input
