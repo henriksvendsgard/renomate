@@ -346,6 +346,13 @@
 		</div>
 	{/if}
 
+	<div
+		class="mt-12 text-center text-charcoal text-sm bg-yellow-100 border border-yellow-400 p-4 rounded-lg"
+	>
+		<div class="text-yellow-600 text-4xl mb-4">👷 👷‍♀️</div>
+		<p>Husk at dette er en tidlig versjon av appen, og at det kan oppstå feil og mangler.</p>
+	</div>
+
 	<!-- Footer Attribution -->
 	<div class="mt-12 text-center text-charcoal/60 text-sm">Bygget med ❤️ av Henrik og Sofie</div>
 </div>
