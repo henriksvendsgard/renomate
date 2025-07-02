@@ -69,6 +69,14 @@ function createShoppingStore() {
         await shoppingService.toggleCompleted(id);
         await this.load();
       }
+    },
+
+    // Clear all completed items for the current user
+    async clearCompleted(userId: string) {
+      if (browser) {
+        await shoppingService.clearCompleted(userId);
+        await this.load();
+      }
     }
   };
 }

@@ -551,5 +551,23 @@ export const shoppingService = {
       console.error('Error toggling shopping item completion:', err);
       throw err;
     }
+  },
+
+  async clearCompleted(userId: string): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('shopping_items')
+        .delete()
+        .eq('user_id', userId)
+        .eq('completed', true);
+      
+      if (error) {
+        console.error('DB error clearing completed shopping items:', error);
+        throw error;
+      }
+    } catch (err) {
+      console.error('Error clearing completed shopping items:', err);
+      throw err;
+    }
   }
 }; 
