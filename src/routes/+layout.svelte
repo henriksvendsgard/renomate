@@ -60,9 +60,9 @@
 
 	<!-- Footer Navigation - only show when logged in -->
 	{#if showNavFooter && $authStore.isAuthenticated}
-		<footer class="bg-white border-t border-sand/30 py-2 px-4 sticky bottom-0">
+		<footer class="bg-white border-t border-sand/30 pb-8 sm:pb-2 py-2 px-4 sticky bottom-0">
 			<div class="max-w-6xl mx-auto flex justify-between items-center">
-				<nav class="flex-1 flex justify-center space-x-6">
+				<nav class="flex-1 flex justify-center space-x-4 sm:space-x-6">
 					<!-- Home Link -->
 					<a
 						href="/"

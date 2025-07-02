@@ -7,7 +7,7 @@
 	let password = '';
 	let error = '';
 	let loading = false;
-
+	let warning = '';
 	// If already logged in, redirect to home
 	onMount(() => {
 		if ($authStore.isAuthenticated && !$authStore.loading) {
@@ -17,6 +17,7 @@
 
 	async function handleLogin() {
 		error = '';
+		warning = '';
 
 		if (!email || !password) {
 			error = 'Vennligst fyll ut alle feltene';
@@ -28,8 +29,14 @@
 		try {
 			const response = await authStore.login(email, password);
 
+			// If email not confirmed, show error message
+			if (response.error?.message === 'Email not confirmed') {
+				warning = 'Vennligst verifiser din konto';
+				return;
+			}
+
 			if (response.error) {
-				error = response.error.message || 'Ugyldig e-post eller passord';
+				error = 'Ugyldig e-post eller passord';
 			} else {
 				// Successfully logged in, navigate to home page
 				goto('/', { replaceState: true });
@@ -52,6 +59,12 @@
 		{#if error}
 			<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
 				{error}
+			</div>
+		{/if}
+
+		{#if warning}
+			<div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+				{warning}
 			</div>
 		{/if}
 
