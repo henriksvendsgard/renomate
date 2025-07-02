@@ -6,7 +6,6 @@
 
 	export let house: Partial<House> = {};
 	export let isEdit = false;
-	export let userId: string;
 
 	const dispatch = createEventDispatcher<{
 		saved: { success: boolean; newId?: string };
@@ -71,7 +70,6 @@
 			} else {
 				// Add new house
 				const id = await houses.add({
-					userId,
 					name: name.trim(),
 					address: address.trim() || undefined,
 					photo: photo || undefined

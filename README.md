@@ -2,7 +2,7 @@
 
 **Renomate** is a minimalist and collaborative renovation planning app designed for couples or homeowners. Built as a Progressive Web App (PWA), it works offline and syncs your renovation tasks, budgets, and progress room by room.
 
-![Oppuss Logo](static/favicon.png)
+![Renomate Logo](static/favicon.png)
 
 ## Features
 
@@ -21,7 +21,7 @@
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd oppuss
+   cd renomate
    ```
 
 2. **Install dependencies**
@@ -48,7 +48,7 @@ The built application will be in the `build` directory.
 
 1. Visit the deployed app in a supported browser (Chrome, Edge, Firefox)
 2. Open the browser menu
-3. Look for "Install Oppuss" or "Add to Home Screen"
+3. Look for "Install Renomate" or "Add to Home Screen"
 4. Follow the prompts to install
 
 ## Tech Stack
@@ -62,7 +62,7 @@ The built application will be in the `build` directory.
 ## Project Structure
 
 ```
-oppuss/
+renomate/
 ├── src/                      # Source code
 │   ├── lib/                  # Library code
 │   │   ├── components/       # Svelte components
