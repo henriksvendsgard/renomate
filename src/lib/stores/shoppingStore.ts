@@ -1,24 +1,31 @@
 import { writable, derived } from 'svelte/store';
 import type { ShoppingItem } from '$lib/types';
-import { shoppingService } from '$lib/services/db';
+import { shoppingService } from '$lib/services/dbService';
 import { browser } from '$app/environment';
+import { get } from 'svelte/store';
+import { authStore } from '$lib/stores/authStore';
 
 // Initialize with empty array
 const initialItems: ShoppingItem[] = [];
 
 function createShoppingStore() {
-  const { subscribe, set, update } = writable<ShoppingItem[]>(initialItems);
+  const { subscribe, set } = writable<ShoppingItem[]>(initialItems);
 
   return {
     subscribe,
     
-    // Load shopping items from the database for a specific user
-    async load(userId?: string) {
+    // Load shopping items from the database for the current user
+    async load() {
       if (browser) {
         try {
-          const items = userId ? 
-            await shoppingService.getAllForUser(userId) : 
-            await shoppingService.getAll();
+          const currentUser = get(authStore).user;
+          if (!currentUser?.id) {
+            console.warn('Shopping store: No authenticated user, cannot load items');
+            set([]);
+            return;
+          }
+          
+          const items = await shoppingService.getAllForUser(currentUser.id);
           
           console.log('Shopping store: Loaded items:', items);
           set(items);
@@ -35,7 +42,7 @@ function createShoppingStore() {
     async add(item: Omit<ShoppingItem, 'id' | 'createdAt' | 'updatedAt'>) {
       if (browser) {
         const id = await shoppingService.add(item);
-        await this.load(item.userId);
+        await this.load();
         return id;
       }
     },
@@ -44,34 +51,23 @@ function createShoppingStore() {
     async update(id: string, updates: Partial<Omit<ShoppingItem, 'id' | 'createdAt' | 'updatedAt'>>) {
       if (browser) {
         await shoppingService.update(id, updates);
-        const item = await shoppingService.getById(id);
-        if (item) {
-          await this.load(item.userId);
-        }
+        await this.load();
       }
     },
     
     // Delete a shopping item
-    async delete(id: string, userId: string) {
+    async delete(id: string) {
       if (browser) {
         await shoppingService.delete(id);
-        await this.load(userId);
+        await this.load();
       }
     },
     
     // Toggle completion status of an item
-    async toggleCompleted(id: string, userId: string) {
+    async toggleCompleted(id: string) {
       if (browser) {
         await shoppingService.toggleCompleted(id);
-        await this.load(userId);
-      }
-    },
-    
-    // Clear all completed items
-    async clearCompleted(userId: string) {
-      if (browser) {
-        await shoppingService.deleteCompleted(userId);
-        await this.load(userId);
+        await this.load();
       }
     }
   };

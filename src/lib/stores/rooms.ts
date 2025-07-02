@@ -1,6 +1,6 @@
 import { writable, derived } from 'svelte/store';
 import type { Room, Task, House } from '$lib/types';
-import { roomService, houseService, taskService } from '$lib/services/db';
+import { roomService, houseService, taskService } from '$lib/services/dbService';
 import { browser } from '$app/environment';
 
 // Initialize with empty arrays
@@ -8,19 +8,18 @@ const initialHouses: House[] = [];
 const initialRooms: Room[] = [];
 
 function createHousesStore() {
-  const { subscribe, set, update } = writable<House[]>(initialHouses);
+  const { subscribe, set } = writable<House[]>(initialHouses);
 
   return {
     subscribe,
     
-    // Load houses from the database for a specific user
-    async load(userId?: string) {
+    // Load houses from the database for the current user
+    async load() {
       if (browser) {
-        console.log('Houses store: Loading houses for user:', userId);
+        console.log('Houses store: Loading houses for current user');
         try {
-          const houses = userId ? 
-            await houseService.getAllForUser(userId) : 
-            await houseService.getAll();
+          // Since we simplified the service, getAll() already filters by current user
+          const houses = await houseService.getAll();
           console.log('Houses store: Loaded houses:', houses);
           set(houses);
         } catch (error) {
@@ -33,10 +32,10 @@ function createHousesStore() {
     },
     
     // Add a new house
-    async add(house: Omit<House, 'id' | 'createdAt' | 'updatedAt'>) {
+    async add(house: { name: string; address?: string; photo?: string }) {
       if (browser) {
         const id = await houseService.add(house);
-        await this.load(house.userId);
+        await this.load();
         return id;
       }
     },
@@ -45,22 +44,16 @@ function createHousesStore() {
     async update(id: string, updates: Partial<Omit<House, 'id' | 'createdAt' | 'updatedAt'>>) {
       if (browser) {
         await houseService.update(id, updates);
-        const house = await houseService.getById(id);
-        if (house) {
-          await this.load(house.userId);
-        }
+        await this.load();
       }
     },
     
     // Delete a house and all its rooms
     async delete(id: string) {
       if (browser) {
-        const house = await houseService.getById(id);
         await houseService.delete(id);
-        if (house) {
-          await this.load(house.userId);
-          await rooms.load(); // Reload rooms as well
-        }
+        await this.load();
+        await rooms.load(); // Reload rooms as well
       }
     }
   };
@@ -72,23 +65,18 @@ function createRoomsStore() {
   return {
     subscribe,
     
-    // Load rooms from the database
-    async load(userId?: string) {
+    // Load rooms from the database for the current user's houses
+    async load() {
       if (browser) {
-        if (userId) {
-          // Get all houses for the user
-          const userHouses = await houseService.getAllForUser(userId);
-          // Get all rooms for those houses
-          const rooms = [];
-          for (const house of userHouses) {
-            const houseRooms = await roomService.getAllForHouse(house.id);
-            rooms.push(...houseRooms);
-          }
-          set(rooms);
-        } else {
-          const rooms = await roomService.getAll();
-          set(rooms);
+        // Get all houses for the current user
+        const userHouses = await houseService.getAll();
+        // Get all rooms for those houses
+        const rooms = [];
+        for (const house of userHouses) {
+          const houseRooms = await roomService.getAllForHouse(house.id);
+          rooms.push(...houseRooms);
         }
+        set(rooms);
       }
     },
     

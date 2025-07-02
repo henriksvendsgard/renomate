@@ -32,16 +32,16 @@
 	// Load data when user is authenticated
 	$effect(() => {
 		if ($authStore.isAuthenticated && user) {
-			loadData(user.id);
+			loadData();
 		}
 	});
 
-	async function loadData(userId: string) {
+	async function loadData() {
 		try {
 			isLoading = true;
 			loadError = null;
-			// Only load houses for now to simplify
-			await houses.load(userId);
+			// Load houses for the current user
+			await houses.load();
 		} catch (error) {
 			console.error('Error loading data:', error);
 			loadError = 'Kunne ikke laste husene dine. Vennligst prøv igjen senere.';
@@ -54,7 +54,7 @@
 <div class="max-w-6xl mx-auto px-4 sm:p-6">
 	<header class="py-6">
 		<div class="flex items-center gap-2 mb-4">
-			<img src="/renomate-logo.png" alt="Oppuss logo" class="w-16 h-16" />
+			<img src="/renomate-logo.png" alt="Renomate logo" class="w-16 h-16" />
 			<div>
 				<h1 class="text-3xl text-charcoal font-comfortaa mt-3">renomate</h1>
 			</div>
@@ -78,10 +78,9 @@
 		{#if showAddHouseForm}
 			<div class="mb-8">
 				<HouseForm
-					userId={user?.id || ''}
 					on:saved={(e) => {
 						showAddHouseForm = false;
-						loadData(user?.id || '');
+						loadData();
 					}}
 					on:cancel={() => {
 						showAddHouseForm = false;
@@ -94,7 +93,7 @@
 		{#if loadError}
 			<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
 				{loadError}
-				<button class="ml-2 underline" onclick={() => loadData(user?.id || '')}>Prøv igjen</button>
+				<button class="ml-2 underline" onclick={() => loadData()}>Prøv igjen</button>
 			</div>
 		{/if}
 

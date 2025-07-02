@@ -60,7 +60,7 @@
 
 			// Set up file download
 			a.href = url;
-			a.download = `oppuss-backup-${new Date().toISOString().split('T')[0]}.json`;
+			a.download = `renomate-backup-${new Date().toISOString().split('T')[0]}.json`;
 			document.body.appendChild(a);
 			a.click();
 
@@ -184,12 +184,13 @@
 
 	<div class="bg-white rounded-lg shadow p-6 mb-8">
 		<p class="text-charcoal/80 mb-4">
-			Velkommen til innstillingene for Oppuss! Her kan du tilpasse appen etter dine behov og
+			Velkommen til innstillingene for Renomate! Her kan du tilpasse appen etter dine behov og
 			administrere dine data.
 		</p>
 		<p class="text-charcoal/70 text-sm">
-			Oppuss er designet for å være enkel å bruke, samtidig som den gir deg full kontroll over dine
-			oppussingsprosjekter. Vi jobber kontinuerlig med å forbedre appen og legge til nye funksjoner.
+			Renomate er designet for å være enkel å bruke, samtidig som den gir deg full kontroll over
+			dine oppussingsprosjekter. Vi jobber kontinuerlig med å forbedre appen og legge til nye
+			funksjoner.
 		</p>
 	</div>
 
@@ -198,7 +199,7 @@
 		<div class="bg-white rounded-lg shadow p-6 mb-8">
 			<h2 class="text-xl font-semibold mb-4">Installer app</h2>
 			<p class="text-charcoal/70 mb-4">
-				Installer Oppuss som en app på enheten din for bedre ytelse og offline-tilgang.
+				Installer Renomate som en app på enheten din for bedre ytelse og offline-tilgang.
 			</p>
 			<button onclick={installPWA} class="btn btn-primary inline-flex items-center gap-2">
 				<svg
