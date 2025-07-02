@@ -49,21 +49,21 @@
 		if (!$authStore.isAuthenticated && !$authStore.loading) {
 			goto('/login');
 		} else if (user) {
-			loadShoppingItems(user.id);
+			loadShoppingItems();
 		}
 	});
 
 	// Load shopping items
 	$effect(() => {
 		if ($authStore.isAuthenticated && user) {
-			loadShoppingItems(user.id);
+			loadShoppingItems();
 		}
 	});
 
-	async function loadShoppingItems(userId: string) {
+	async function loadShoppingItems() {
 		try {
 			isLoading = true;
-			await shoppingStore.load(userId);
+			await shoppingStore.load();
 		} catch (error) {
 			console.error('Error loading shopping items:', error);
 		} finally {
@@ -95,7 +95,7 @@
 	async function toggleItem(id: string) {
 		if (!user) return;
 		try {
-			await shoppingStore.toggleCompleted(id, user.id);
+			await shoppingStore.toggleCompleted(id);
 		} catch (error) {
 			console.error('Error toggling item:', error);
 		}
@@ -105,7 +105,7 @@
 	async function deleteItem(id: string) {
 		if (!user) return;
 		try {
-			await shoppingStore.delete(id, user.id);
+			await shoppingStore.delete(id);
 		} catch (error) {
 			console.error('Error deleting item:', error);
 		}
@@ -186,8 +186,8 @@
 			<input
 				type="text"
 				bind:value={newItemText}
-				placeholder="Legg til nytt element..."
-				class="flex-grow p-2 border border-sand rounded-md focus:outline-none focus:ring-1 focus:ring-asphalt"
+				placeholder="Hva trenger du?"
+				class="flex-grow p-2 border border-sand rounded-md focus:outline-none focus:ring-1 focus:ring-asphalt min-w-0"
 			/>
 			<div class="flex items-center bg-sand/30 rounded-md px-2">
 				<button
@@ -268,10 +268,11 @@
 								>
 									<div class="flex gap-2 mb-2">
 										<input
+											name="title"
 											type="text"
 											bind:value={editText}
-											class="flex-grow p-2 border border-sand rounded-md focus:outline-none focus:ring-1 focus:ring-asphalt"
-											autofocus
+											placeholder="Hva trenger du?"
+											class="p-2 border border-sand rounded-md focus:outline-none focus:ring-1 focus:ring-asphalt min-w-0"
 										/>
 										<div class="flex items-center bg-sand/30 rounded-md px-2">
 											<button
@@ -282,6 +283,7 @@
 												-
 											</button>
 											<input
+												name="quantity"
 												type="number"
 												bind:value={editQuantity}
 												min="1"
@@ -299,6 +301,7 @@
 
 									<div class="mb-3">
 										<input
+											name="note"
 											type="text"
 											bind:value={editComment}
 											placeholder="Legg til kommentar (valgfritt)..."
@@ -329,7 +332,7 @@
 								>
 									<!-- Checkbox -->
 									<button
-										class="w-6 h-6 border-2 rounded-full flex items-center justify-center text-white {item.completed
+										class="w-6 h-6 flex-shrink-0 border-2 rounded-full flex items-center justify-center text-white {item.completed
 											? 'bg-pine border-pine'
 											: 'border-charcoal/30 hover:border-pine/70'}"
 										onclick={() => toggleItem(item.id)}
@@ -353,10 +356,10 @@
 
 									<!-- Item details -->
 									<div class="flex-grow">
-										<div class="flex items-center">
+										<div class="flex items-start relative">
 											<span class="font-medium">{item.title}</span>
 											{#if item.quantity && item.quantity > 1}
-												<span class="ml-2 px-2 py-0.5 bg-sand/30 rounded-full text-sm">
+												<span class="ml-2 px-2 py-0.5 bg-sand/30 rounded-full text-sm text-nowrap">
 													{item.quantity} stk
 												</span>
 											{/if}
@@ -379,9 +382,9 @@
 									</div>
 
 									<!-- Action buttons -->
-									<div class="flex">
+									<div class="flex gap-1">
 										<button
-											class="text-charcoal/60 hover:text-charcoal p-1"
+											class="text-charcoal/80 hover:text-charcoal p-1"
 											onclick={() => startEditing(item)}
 											aria-label="Rediger element"
 										>
@@ -464,7 +467,7 @@
 							>
 								<!-- Checkbox -->
 								<button
-									class="w-6 h-6 border-2 rounded-full flex items-center justify-center text-white {item.completed
+									class="w-6 h-6 flex-shrink-0 border-2 rounded-full flex items-center justify-center text-white {item.completed
 										? 'bg-pine border-pine'
 										: 'border-charcoal/30 hover:border-pine/70'}"
 									onclick={() => toggleItem(item.id)}
@@ -488,22 +491,22 @@
 
 								<!-- Item details -->
 								<div class="flex-grow">
-									<div class="flex items-center">
+									<div class="flex items-start">
 										<span class="line-through text-charcoal/60">{item.title}</span>
 										{#if item.quantity && item.quantity > 1}
 											<span
-												class="ml-2 px-2 py-0.5 bg-sand/30 rounded-full text-sm line-through text-charcoal/60"
+												class="ml-2 px-2 py-0.5 bg-sand/30 rounded-full text-sm line-through text-charcoal/60 text-nowrap"
 											>
 												{item.quantity} stk
 											</span>
 										{/if}
-										{#if isRecentlyAdded(item)}
+										<!-- {#if isRecentlyAdded(item)}
 											<span
 												class="ml-2 px-2 py-0.5 bg-pine/10 text-pine rounded text-xs font-medium opacity-50"
 											>
 												Ny
 											</span>
-										{/if}
+										{/if} -->
 									</div>
 									{#if item.note}
 										<p class="text-sm text-charcoal/50 mt-1 line-through">{item.note}</p>
