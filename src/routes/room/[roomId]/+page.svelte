@@ -140,7 +140,10 @@
 	</div>
 
 	{#if isLoading}
-		<div class="py-10 text-center text-charcoal/70">
+		<div class="py-10 pt-[40%] text-center text-charcoal/70">
+			<div
+				class="animate-spin inline-block w-6 h-6 border-2 border-current border-t-transparent text-blue-600 rounded-full mb-2"
+			></div>
 			<p>Laster romdetaljer...</p>
 		</div>
 	{:else if !room}
