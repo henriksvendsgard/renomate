@@ -31,9 +31,9 @@
 			// Show incomplete tasks first
 			if (a.done !== b.done) return a.done ? 1 : -1;
 
-			// Then sort by created date (newest first)
+			// Then sort by created date (oldest first)
 			if (a.createdAt && b.createdAt) {
-				return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+				return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
 			}
 
 			return 0;

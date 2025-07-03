@@ -181,7 +181,9 @@
 					</div>
 
 					{#if task.note}
-						<p class="text-sm text-charcoal/70 mt-1 whitespace-pre-line w-fit">{task.note}</p>
+						<p class="text-sm text-charcoal/70 mt-1 w-fit whitespace-pre-line text-left">
+							{task.note}
+						</p>
 					{/if}
 
 					{#if showCost && task.cost !== undefined && task.cost > 0}
