@@ -263,6 +263,83 @@ export function downloadImage(base64Image: string, filename = 'image.jpg'): void
   }
 }
 
+// Enhanced download function with mobile support
+export async function downloadImageNative(base64Image: string, filename = 'image.jpg'): Promise<void> {
+  try {
+    // Check if we're on a mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // Try Web Share API first (works well on mobile)
+      if (navigator.share && navigator.canShare) {
+        try {
+          // Convert base64 to blob
+          const response = await fetch(base64Image);
+          const blob = await response.blob();
+          
+          // Create file from blob
+          const file = new File([blob], filename, { type: blob.type });
+          
+          // Check if we can share files
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: 'Rom bilde',
+              text: 'Bilde fra Renomate app',
+              files: [file]
+            });
+            console.log('Image shared via Web Share API');
+            return;
+          }
+        } catch (shareError) {
+          console.log('Web Share API failed, falling back to standard download:', shareError);
+        }
+      }
+      
+      // Try File System Access API (Chrome/Edge on desktop and some mobile)
+      if ('showSaveFilePicker' in window) {
+        try {
+          const response = await fetch(base64Image);
+          const blob = await response.blob();
+          
+          interface SaveFilePickerOptions {
+            suggestedName: string;
+            types: Array<{
+              description: string;
+              accept: Record<string, string[]>;
+            }>;
+          }
+          
+          const handle = await (window as Window & { showSaveFilePicker: (options: SaveFilePickerOptions) => Promise<FileSystemFileHandle> }).showSaveFilePicker({
+            suggestedName: filename,
+            types: [{
+              description: 'Image file',
+              accept: {
+                'image/*': [`.${getFileExtension(blob.type)}`]
+              }
+            }]
+          });
+          
+          const writable = await handle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+          
+          console.log('Image saved via File System Access API');
+          return;
+        } catch (fsError) {
+          console.log('File System Access API failed, falling back to standard download:', fsError);
+        }
+      }
+    }
+    
+    // Fallback to standard download method
+    downloadImage(base64Image, filename);
+  } catch (error) {
+    console.error('Error in native download:', error);
+    // Final fallback to standard download
+    downloadImage(base64Image, filename);
+  }
+}
+
 // Get file extension from MIME type
 export function getFileExtension(mimeType: string): string {
   const extensions: Record<string, string> = {
